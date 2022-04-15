@@ -87,7 +87,6 @@
 		F6BDB91823637C5F003E69F2 /* ActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6BDB91723637C5F003E69F2 /* ActivityIndicatorView.swift */; };
 		F6BDB91A236382E7003E69F2 /* SVGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6BDB919236382E7003E69F2 /* SVGImageView.swift */; };
 		F6C1F9D723CE3034005A98C8 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C1F9D623CE3034005A98C8 /* SearchBar.swift */; };
-		F6E7ACE223F5D1EC00AB48AB /* EnvironmentOverrides in Frameworks */ = {isa = PBXBuildFile; productRef = F6E7ACE123F5D1EC00AB48AB /* EnvironmentOverrides */; };
 		F6E7ACE523F83BEB00AB48AB /* ContentViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E7ACE423F83BEB00AB48AB /* ContentViewTests.swift */; };
 		F6F003AF236A290E00AAC7C6 /* WebRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6F003AE236A290E00AAC7C6 /* WebRepositoryTests.swift */; };
 		F6F003B1236AF31400AAC7C6 /* SystemEventsHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6F003B0236AF31400AAC7C6 /* SystemEventsHandlerTests.swift */; };
@@ -211,7 +210,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6E7ACE223F5D1EC00AB48AB /* EnvironmentOverrides in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,7 +541,6 @@
 			);
 			name = CountriesSwiftUI;
 			packageProductDependencies = (
-				F6E7ACE123F5D1EC00AB48AB /* EnvironmentOverrides */,
 			);
 			productName = CountriesSwiftUI;
 			productReference = F64495E12360D66400C9BB1F /* CountriesSwiftUI.app */;
@@ -604,7 +601,6 @@
 			mainGroup = F64495D82360D66400C9BB1F;
 			packageReferences = (
 				F6B6212223B52AE600CD00C7 /* XCRemoteSwiftPackageReference "ViewInspector" */,
-				F6E7ACE023F5D1EC00AB48AB /* XCRemoteSwiftPackageReference "EnvironmentOverrides" */,
 			);
 			productRefGroup = F64495E22360D66400C9BB1F /* Products */;
 			projectDirPath = "";
@@ -1044,14 +1040,6 @@
 				version = 0.9.0;
 			};
 		};
-		F6E7ACE023F5D1EC00AB48AB /* XCRemoteSwiftPackageReference "EnvironmentOverrides" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nalexn/EnvironmentOverrides";
-			requirement = {
-				kind = exactVersion;
-				version = 0.0.4;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1059,11 +1047,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F6B6212223B52AE600CD00C7 /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
-		};
-		F6E7ACE123F5D1EC00AB48AB /* EnvironmentOverrides */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F6E7ACE023F5D1EC00AB48AB /* XCRemoteSwiftPackageReference "EnvironmentOverrides" */;
-			productName = EnvironmentOverrides;
 		};
 /* End XCSwiftPackageProductDependency section */
 
