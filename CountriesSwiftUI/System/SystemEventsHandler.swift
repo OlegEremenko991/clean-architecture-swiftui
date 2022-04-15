@@ -14,23 +14,25 @@ protocol SystemEventsHandler {
     func sceneDidBecomeActive()
     func sceneWillResignActive()
     func handlePushRegistration(result: Result<Data, Error>)
-    func appDidReceiveRemoteNotification(payload: NotificationPayload,
-                                         fetchCompletion: @escaping FetchCompletion)
+    func appDidReceiveRemoteNotification(
+        payload: NotificationPayload,
+        fetchCompletion: @escaping FetchCompletion
+    )
 }
 
 struct RealSystemEventsHandler: SystemEventsHandler {
-    
     let container: DIContainer
     let deepLinksHandler: DeepLinksHandler
     let pushNotificationsHandler: PushNotificationsHandler
     let pushTokenWebRepository: PushTokenWebRepository
     private var cancelBag = CancelBag()
     
-    init(container: DIContainer,
-         deepLinksHandler: DeepLinksHandler,
-         pushNotificationsHandler: PushNotificationsHandler,
-         pushTokenWebRepository: PushTokenWebRepository) {
-        
+    init(
+        container: DIContainer,
+        deepLinksHandler: DeepLinksHandler,
+        pushNotificationsHandler: PushNotificationsHandler,
+        pushTokenWebRepository: PushTokenWebRepository
+    ) {
         self.container = container
         self.deepLinksHandler = deepLinksHandler
         self.pushNotificationsHandler = pushNotificationsHandler
@@ -39,39 +41,10 @@ struct RealSystemEventsHandler: SystemEventsHandler {
         installKeyboardHeightObserver()
         installPushNotificationsSubscriberOnLaunch()
     }
-     
-    private func installKeyboardHeightObserver() {
-        let appState = container.appState
-        NotificationCenter.default.keyboardHeightPublisher
-            .sink { [appState] height in
-                appState[\.system.keyboardHeight] = height
-            }
-            .store(in: cancelBag)
-    }
-     
-    private func installPushNotificationsSubscriberOnLaunch() {
-        weak var permissions = container.services.userPermissionsService
-        container.appState
-            .updates(for: AppState.permissionKeyPath(for: .pushNotifications))
-            .first(where: { $0 != .unknown })
-            .sink { status in
-                if status == .granted {
-                    // If the permission was granted on previous launch
-                    // requesting the push token again:
-                    permissions?.request(permission: .pushNotifications)
-                }
-            }
-            .store(in: cancelBag)
-    }
     
     func sceneOpenURLContexts(_ urlContexts: Set<UIOpenURLContext>) {
         guard let url = urlContexts.first?.url else { return }
         handle(url: url)
-    }
-    
-    private func handle(url: URL) {
-        guard let deepLink = DeepLink(url: url) else { return }
-        deepLinksHandler.open(deepLink: deepLink)
     }
     
     func sceneDidBecomeActive() {
@@ -92,8 +65,10 @@ struct RealSystemEventsHandler: SystemEventsHandler {
         }
     }
     
-    func appDidReceiveRemoteNotification(payload: NotificationPayload,
-                                         fetchCompletion: @escaping FetchCompletion) {
+    func appDidReceiveRemoteNotification(
+        payload: NotificationPayload,
+        fetchCompletion: @escaping FetchCompletion
+    ) {
         container.services.countriesService
             .refreshCountriesList()
             .sinkToResult { result in
@@ -103,14 +78,43 @@ struct RealSystemEventsHandler: SystemEventsHandler {
     }
 }
 
-// MARK: - Notifications
+private extension RealSystemEventsHandler {
+    func installKeyboardHeightObserver() {
+        let appState = container.appState
+        NotificationCenter.default.keyboardHeightPublisher
+            .sink { [appState] height in
+                appState[\.system.keyboardHeight] = height
+            }
+            .store(in: cancelBag)
+    }
 
+    func installPushNotificationsSubscriberOnLaunch() {
+        weak var permissions = container.services.userPermissionsService
+        container.appState
+            .updates(for: AppState.permissionKeyPath(for: .pushNotifications))
+            .first(where: { $0 != .unknown })
+            .sink { status in
+                if status == .granted {
+                    // If the permission was granted on previous launch
+                    // requesting the push token again:
+                    permissions?.request(permission: .pushNotifications)
+                }
+            }
+            .store(in: cancelBag)
+    }
+
+    func handle(url: URL) {
+        guard let deepLink = DeepLink(url: url) else { return }
+        deepLinksHandler.open(deepLink: deepLink)
+    }
+}
+// MARK: - Notifications
 private extension NotificationCenter {
     var keyboardHeightPublisher: AnyPublisher<CGFloat, Never> {
         let willShow = publisher(for: UIApplication.keyboardWillShowNotification)
             .map { $0.keyboardHeight }
         let willHide = publisher(for: UIApplication.keyboardWillHideNotification)
-            .map { _ in CGFloat(0) }
+            .map { _ in CGFloat.zero }
         return Publishers.Merge(willShow, willHide)
             .eraseToAnyPublisher()
     }
@@ -118,7 +122,6 @@ private extension NotificationCenter {
 
 private extension Notification {
     var keyboardHeight: CGFloat {
-        return (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?
-            .cgRectValue.height ?? 0
+        (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height ?? .zero
     }
 }

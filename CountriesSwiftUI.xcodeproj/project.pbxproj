@@ -35,7 +35,6 @@
 		F64496102361B64700C9BB1F /* CountriesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F644960F2361B64700C9BB1F /* CountriesList.swift */; };
 		F64496122361BB4900C9BB1F /* ServicesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F64496112361BB4900C9BB1F /* ServicesContainer.swift */; };
 		F661F2B6237734FA0014E142 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F661F2B5237734FA0014E142 /* AppEnvironment.swift */; };
-		F661F2B8237738CE0014E142 /* RootViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F661F2B7237738CE0014E142 /* RootViewModifier.swift */; };
 		F661F2CC23783E360014E142 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F661F2CB23783E360014E142 /* Helpers.swift */; };
 		F66EDB6823F1599F00A01B9F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F66EDB6A23F1599F00A01B9F /* Localizable.strings */; };
 		F674964A244B059A00E1D76B /* LazyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6749649244B059A00E1D76B /* LazyList.swift */; };
@@ -97,7 +96,6 @@
 		F644960F2361B64700C9BB1F /* CountriesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesList.swift; sourceTree = "<group>"; };
 		F64496112361BB4900C9BB1F /* ServicesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesContainer.swift; sourceTree = "<group>"; };
 		F661F2B5237734FA0014E142 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
-		F661F2B7237738CE0014E142 /* RootViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModifier.swift; sourceTree = "<group>"; };
 		F661F2CB23783E360014E142 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		F66EDB6723F1599800A01B9F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F66EDB6923F1599F00A01B9F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -234,7 +232,6 @@
 		F64495F92360D68D00C9BB1F /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				F661F2B7237738CE0014E142 /* RootViewModifier.swift */,
 				F62822B523647F8300823BA1 /* Screens */,
 				F62822B623647FA700823BA1 /* Components */,
 			);
@@ -492,7 +489,6 @@
 				F6238A91244337D400DD30EA /* CoreDataHelpers.swift in Sources */,
 				F64496082360DFB700C9BB1F /* Models.swift in Sources */,
 				F64496032360D8EB00C9BB1F /* Loadable.swift in Sources */,
-				F661F2B8237738CE0014E142 /* RootViewModifier.swift in Sources */,
 				F6BDB91A236382E7003E69F2 /* SVGImageView.swift in Sources */,
 				F661F2B6237734FA0014E142 /* AppEnvironment.swift in Sources */,
 				F68B530A2376EE8C00D6337C /* ImageWebRepository.swift in Sources */,

@@ -15,7 +15,6 @@ protocol ImagesService {
 }
 
 struct RealImagesService: ImagesService {
-    
     let webRepository: ImageWebRepository
     
     init(webRepository: ImageWebRepository) {
@@ -29,14 +28,11 @@ struct RealImagesService: ImagesService {
         let cancelBag = CancelBag()
         image.wrappedValue = .isLoading(last: image.wrappedValue.value, cancelBag: cancelBag)
         webRepository.load(imageURL: url, width: 300)
-            .sinkToLoadable {
-                image.wrappedValue = $0
-            }
+            .sinkToLoadable { image.wrappedValue = $0 }
             .store(in: cancelBag)
     }
 }
 
 struct StubImagesService: ImagesService {
-    func load(image: LoadableSubject<UIImage>, url: URL?) {
-    }
+    func load(image: LoadableSubject<UIImage>, url: URL?) {}
 }

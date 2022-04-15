@@ -36,7 +36,7 @@ extension AppState {
 
 extension AppState {
     struct System: Equatable {
-        var isActive: Bool = false
+        var isActive = false
         var keyboardHeight: CGFloat = 0
     }
 }
@@ -56,10 +56,10 @@ extension AppState {
 }
 
 func == (lhs: AppState, rhs: AppState) -> Bool {
-    return lhs.userData == rhs.userData &&
-        lhs.routing == rhs.routing &&
-        lhs.system == rhs.system &&
-        lhs.permissions == rhs.permissions
+    lhs.userData == rhs.userData
+    && lhs.routing == rhs.routing
+    && lhs.system == rhs.system
+    && lhs.permissions == rhs.permissions
 }
 
 #if DEBUG

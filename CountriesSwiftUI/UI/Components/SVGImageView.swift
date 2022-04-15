@@ -11,16 +11,9 @@ import Combine
 import WebKit
 
 struct SVGImageView: View {
-    
     @ObservedObject private(set) var viewModel: ViewModel
-    let inspection = Inspection<Self>()
     
     var body: some View {
-        content
-            .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
-    }
-    
-    private var content: AnyView {
         switch viewModel.image {
         case .notRequested: return AnyView(notRequestedView)
         case .isLoading: return AnyView(loadingView)
@@ -58,10 +51,8 @@ private extension SVGImageView {
 }
 
 // MARK: - ViewModel
-
 extension SVGImageView {
-    class ViewModel: ObservableObject {
-        
+    final class ViewModel: ObservableObject {
         // State
         let imageURL: URL
         @Published var image: Loadable<UIImage>
@@ -70,14 +61,17 @@ extension SVGImageView {
         let container: DIContainer
         private var cancelBag = CancelBag()
         
-        init(container: DIContainer, imageURL: URL, image: Loadable<UIImage> = .notRequested) {
+        init(
+            container: DIContainer,
+            imageURL: URL,
+            image: Loadable<UIImage> = .notRequested
+        ) {
             self.imageURL = imageURL
             self._image = .init(initialValue: image)
             self.container = container
         }
         
         // MARK: - Side Effects
-        
         func loadImage() {
             container.services.imagesService
                 .load(image: loadableSubject(\.image), url: imageURL)

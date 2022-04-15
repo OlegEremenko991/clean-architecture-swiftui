@@ -10,7 +10,6 @@ import SwiftUI
 import Combine
 
 // MARK: - View
-
 struct ContentView: View {
     @ObservedObject private(set) var viewModel: ViewModel
     
@@ -20,17 +19,14 @@ struct ContentView: View {
                 Text("Running unit tests")
             } else {
                 CountriesList(viewModel: .init(container: viewModel.container))
-                    .modifier(RootViewAppearance())
             }
         }
     }
 }
 
 // MARK: - ViewModel
-
 extension ContentView {
-    class ViewModel: ObservableObject {
-        
+    final class ViewModel: ObservableObject {
         let container: DIContainer
         let isRunningTests: Bool
         

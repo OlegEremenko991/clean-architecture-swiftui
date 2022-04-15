@@ -10,15 +10,12 @@ import SwiftUI
 import Combine
 
 struct CountryDetails: View {
-    
     @ObservedObject private(set) var viewModel: ViewModel
     @Environment(\.locale) private var locale: Locale
-    let inspection = Inspection<Self>()
     
     var body: some View {
         content
             .navigationBarTitle(viewModel.country.name(locale: locale))
-            .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
     
     private var content: AnyView {

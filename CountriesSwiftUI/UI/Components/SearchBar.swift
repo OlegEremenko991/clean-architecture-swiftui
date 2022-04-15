@@ -10,7 +10,6 @@ import UIKit
 import SwiftUI
 
 struct SearchBar: UIViewRepresentable {
-
     @Binding var text: String
 
     func makeUIView(context: UIViewRepresentableContext<SearchBar>) -> UISearchBar {
@@ -24,13 +23,12 @@ struct SearchBar: UIViewRepresentable {
     }
     
     func makeCoordinator() -> SearchBar.Coordinator {
-        return Coordinator(text: $text)
+        Coordinator(text: $text)
     }
 }
 
 extension SearchBar {
     final class Coordinator: NSObject, UISearchBarDelegate {
-        
         let text: Binding<String>
         
         init(text: Binding<String>) {

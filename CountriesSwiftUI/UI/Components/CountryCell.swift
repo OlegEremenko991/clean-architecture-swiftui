@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct CountryCell: View {
-    
     let country: Country
     @Environment(\.locale) var locale: Locale
     

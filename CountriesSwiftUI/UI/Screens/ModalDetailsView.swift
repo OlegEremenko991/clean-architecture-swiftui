@@ -9,10 +9,8 @@
 import SwiftUI
 
 struct ModalDetailsView: View {
-    
     @ObservedObject private(set) var viewModel: ViewModel
-    let inspection = Inspection<Self>()
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -29,7 +27,6 @@ struct ModalDetailsView: View {
             .navigationBarTitle(Text(viewModel.country.name), displayMode: .inline)
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
     
     private var closeButton: some View {
@@ -41,7 +38,6 @@ struct ModalDetailsView: View {
 
 extension ModalDetailsView {
     class ViewModel: ObservableObject {
-    
         // State
         let country: Country
         var isDisplayed: Binding<Bool>
@@ -57,7 +53,6 @@ extension ModalDetailsView {
         }
         
         // MARK: - Side Effects
-        
         func close() {
             isDisplayed.wrappedValue = false
         }
@@ -66,7 +61,6 @@ extension ModalDetailsView {
 
 #if DEBUG
 struct ModalDetailsView_Previews: PreviewProvider {
-    
     @State static var isDisplayed: Bool = true
     
     static var previews: some View {

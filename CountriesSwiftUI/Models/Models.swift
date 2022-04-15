@@ -13,9 +13,7 @@ struct Country: Codable, Equatable {
     let translations: [String: String?]
     let population: Int
     let flag: URL?
-    let alpha3Code: Code
-    
-    typealias Code = String
+    let alpha3Code: String
 }
 
 extension Country {
@@ -57,7 +55,8 @@ extension Country {
         let localeId = locale.shortIdentifier
         if let value = translations[localeId], let localizedName = value {
             return localizedName
+        } else {
+            return name
         }
-        return name
     }
 }

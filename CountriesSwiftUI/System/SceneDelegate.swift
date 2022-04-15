@@ -12,12 +12,14 @@ import Combine
 import Foundation
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     var window: UIWindow?
     var systemEventsHandler: SystemEventsHandler?
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
-               options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
         let environment = AppEnvironment.bootstrap()
         let contentView = ContentView(viewModel:
             ContentView.ViewModel(container: environment.container))
@@ -27,7 +29,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window = window
             window.makeKeyAndVisible()
         }
-        self.systemEventsHandler = environment.systemEventsHandler
+        systemEventsHandler = environment.systemEventsHandler
         if !connectionOptions.urlContexts.isEmpty {
             systemEventsHandler?.sceneOpenURLContexts(connectionOptions.urlContexts)
         }

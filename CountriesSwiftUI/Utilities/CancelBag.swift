@@ -22,13 +22,12 @@ final class CancelBag {
     @resultBuilder
     struct Builder {
         static func buildBlock(_ cancellables: AnyCancellable...) -> [AnyCancellable] {
-            return cancellables
+            cancellables
         }
     }
 }
 
 extension AnyCancellable {
-    
     func store(in cancelBag: CancelBag) {
         cancelBag.subscriptions.insert(self)
     }

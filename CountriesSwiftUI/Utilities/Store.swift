@@ -12,7 +12,6 @@ import Combine
 typealias Store<State> = CurrentValueSubject<State, Never>
 
 extension Store {
-    
     subscript<T>(keyPath: WritableKeyPath<Output, T>) -> T where T: Equatable {
         get { value[keyPath: keyPath] }
         set {
@@ -30,13 +29,12 @@ extension Store {
         self.value = value
     }
     
-    func updates<Value>(for keyPath: KeyPath<Output, Value>) ->
-        AnyPublisher<Value, Failure> where Value: Equatable {
-        return map(keyPath).removeDuplicates().eraseToAnyPublisher()
+    func updates<Value>(
+        for keyPath: KeyPath<Output, Value>
+    ) -> AnyPublisher<Value, Failure> where Value: Equatable {
+        map(keyPath).removeDuplicates().eraseToAnyPublisher()
     }
 }
-
-// MARK: -
 
 extension ObservableObject {
     func loadableSubject<Value>(_ keyPath: WritableKeyPath<Self, Loadable<Value>>) -> LoadableSubject<Value> {

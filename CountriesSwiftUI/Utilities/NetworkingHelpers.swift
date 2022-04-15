@@ -27,7 +27,7 @@ extension Just {
 
 extension Publisher {
     func sinkToResult(_ result: @escaping (Result<Output, Failure>) -> Void) -> AnyCancellable {
-        return sink(receiveCompletion: { completion in
+        sink(receiveCompletion: { completion in
             switch completion {
             case let .failure(error):
                 result(.failure(error))
@@ -39,7 +39,7 @@ extension Publisher {
     }
     
     func sinkToLoadable(_ completion: @escaping (Loadable<Output>) -> Void) -> AnyCancellable {
-        return sink(receiveCompletion: { subscriptionCompletion in
+        sink(receiveCompletion: { subscriptionCompletion in
             if let error = subscriptionCompletion.error {
                 completion(.failed(error))
             }
@@ -60,7 +60,6 @@ extension Publisher {
     /// - Parameters:
     ///   - interval: The minimum time interval that should elapse after the subscription.
     /// - Returns: A publisher that optionally delays delivery of elements to the downstream receiver.
-    
     func ensureTimeSpan(_ interval: TimeInterval) -> AnyPublisher<Output, Failure> {
         let timer = Just<Void>(())
             .delay(for: .seconds(interval), scheduler: RunLoop.main)

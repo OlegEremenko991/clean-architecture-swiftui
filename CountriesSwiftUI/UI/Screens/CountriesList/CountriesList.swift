@@ -13,7 +13,6 @@ struct CountriesList: View {
     
     @ObservedObject private(set) var viewModel: ViewModel
     @Environment(\.locale) private var locale: Locale
-    let inspection = Inspection<Self>()
     
     var body: some View {
         GeometryReader { geometry in
@@ -27,7 +26,6 @@ struct CountriesList: View {
             .navigationViewStyle(DoubleColumnNavigationViewStyle())
         }
         .modifier(viewModel.localeReader)
-        .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
     
     private var content: AnyView {

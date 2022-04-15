@@ -14,7 +14,6 @@ protocol ImageWebRepository: WebRepository {
 }
 
 struct RealImageWebRepository: ImageWebRepository {
-    
     let session: URLSession
     let baseURL: String
     let bgQueue = DispatchQueue(label: "bg_parse_queue")
@@ -25,18 +24,17 @@ struct RealImageWebRepository: ImageWebRepository {
     }
     
     func load(imageURL: URL, width: Int) -> AnyPublisher<UIImage, Error> {
-        guard (imageURL.absoluteString as NSString).pathExtension.lowercased() == "svg" else {
-            return download(rawImageURL: imageURL)
+        (imageURL.absoluteString as NSString).pathExtension.lowercased() == "svg"
+        ? Just<Void>.withErrorType(Error.self)
+            .flatMap { importImage(originalURL: imageURL) }
+            .flatMap { exportImage(imported: $0, width: width) }
+            .flatMap { download(exported: $0) }
+            .catch { removeCachedResponses(error: $0) }
             .subscribe(on: bgQueue)
             .receive(on: DispatchQueue.main)
             .extractUnderlyingError()
             .eraseToAnyPublisher()
-        }
-        return Just<Void>.withErrorType(Error.self)
-            .flatMap { self.importImage(originalURL: imageURL) }
-            .flatMap { self.exportImage(imported: $0, width: width) }
-            .flatMap { self.download(exported: $0) }
-            .catch { self.removeCachedResponses(error: $0) }
+        : download(rawImageURL: imageURL)
             .subscribe(on: bgQueue)
             .receive(on: DispatchQueue.main)
             .extractUnderlyingError()
@@ -46,7 +44,8 @@ struct RealImageWebRepository: ImageWebRepository {
     private func importImage(originalURL: URL) -> AnyPublisher<ImageConversion.Import, Error> {
         guard let conversionURL = URL(string:
             baseURL + "/svg-to-png?url=" + originalURL.absoluteString) else {
-            return Fail<ImageConversion.Import, Error>(error: APIError.invalidURL).eraseToAnyPublisher()
+            return Fail<ImageConversion.Import, Error>(error: APIError.invalidURL)
+                .eraseToAnyPublisher()
         }
         var urlRequest = URLRequest(url: conversionURL)
         urlRequest.httpMethod = "GET"
@@ -55,11 +54,12 @@ struct RealImageWebRepository: ImageWebRepository {
             .eraseToAnyPublisher()
     }
     
-    private func exportImage(imported: ImageConversion.Import,
-                             width: Int) -> AnyPublisher<ImageConversion.Export, Error> {
+    private func exportImage(
+        imported: ImageConversion.Import,
+        width: Int
+    ) -> AnyPublisher<ImageConversion.Export, Error> {
         guard let conversionURL = URL(string: imported.urlString + "?ajax=true") else {
-            return Fail<ImageConversion.Export, Error>(
-                error: APIError.imageProcessing([imported.urlRequest]))
+            return Fail<ImageConversion.Export, Error>(error: APIError.imageProcessing([imported.urlRequest]))
                 .eraseToAnyPublisher()
         }
         var urlRequest = URLRequest(url: conversionURL)
@@ -84,7 +84,7 @@ struct RealImageWebRepository: ImageWebRepository {
     private func download(rawImageURL: URL, requests: [URLRequest] = []) -> AnyPublisher<UIImage, Error> {
         let urlRequest = URLRequest(url: rawImageURL)
         return session.dataTaskPublisher(for: urlRequest)
-            .tryMap { (data, response) in
+            .tryMap { data, response in
                 guard let image = UIImage(data: data)
                     else { throw APIError.imageProcessing(requests + [urlRequest]) }
                 return image
@@ -102,22 +102,21 @@ struct RealImageWebRepository: ImageWebRepository {
     }
 }
 
-private struct ImageConversion { }
+private struct ImageConversion {}
 
 extension ImageConversion {
     struct Import {
-        
         let urlString: String
         let ajaxToken: String
         let urlRequest: URLRequest
         
         init(data: Data?, urlRequest: URLRequest) throws {
             guard let data = data, let string = String(data: data, encoding: .utf8),
-                let elementWithURL = string.firstMatch(pattern: #"<form class="form ajax-form".*\.svg">"#),
-                let conversionURL = elementWithURL.firstMatch(pattern: #"https.*\.svg"#),
-                let ajaxTokenElement = string.firstMatch(pattern: #"name=\"file\"><input .*name=\"token\".*>"#),
-                let dirtyToken = ajaxTokenElement.firstMatch(pattern: #"value="([a-z]|[0-9])*"#)
-                else { throw APIError.imageProcessing([urlRequest]) }
+                  let elementWithURL = string.firstMatch(pattern: #"<form class="form ajax-form".*\.svg">"#),
+                  let conversionURL = elementWithURL.firstMatch(pattern: #"https.*\.svg"#),
+                  let ajaxTokenElement = string.firstMatch(pattern: #"name=\"file\"><input .*name=\"token\".*>"#),
+                  let dirtyToken = ajaxTokenElement.firstMatch(pattern: #"value="([a-z]|[0-9])*"#)
+            else { throw APIError.imageProcessing([urlRequest]) }
             self.urlString = conversionURL
             self.ajaxToken = String(dirtyToken.suffix(from: dirtyToken.index(dirtyToken.startIndex, offsetBy: 7)))
             self.urlRequest = urlRequest
@@ -127,16 +126,15 @@ extension ImageConversion {
 
 extension ImageConversion {
     struct Export {
-        
         let imageURL: URL
         let urlRequests: [URLRequest]
 
         init(data: Data?, urlRequests: [URLRequest]) throws {
             guard let data = data, let string = String(data: data, encoding: .utf8),
-                let element = string.firstMatch(pattern: #"src=.*style="width"#),
-                let imageURL = element.firstMatch(pattern: #"\/\/.*\.png"#),
-                let url = URL(string: "https:" + imageURL)
-                else { throw APIError.imageProcessing(urlRequests) }
+                  let element = string.firstMatch(pattern: #"src=.*style="width"#),
+                  let imageURL = element.firstMatch(pattern: #"\/\/.*\.png"#),
+                  let url = URL(string: "https:" + imageURL)
+            else { throw APIError.imageProcessing(urlRequests) }
             self.imageURL = url
             self.urlRequests = urlRequests
         }
@@ -146,9 +144,9 @@ extension ImageConversion {
 private extension String {
     func firstMatch(pattern: String) -> String? {
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []),
-            let matchResult = regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)),
-            let range = matchResult.ranges.first(where: { $0.location != NSNotFound })
-            else { return nil }
+              let matchResult = regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: count)),
+              let range = matchResult.ranges.first(where: { $0.location != NSNotFound })
+        else { return nil }
         return (self as NSString).substring(with: range)
     }
 }
@@ -157,7 +155,7 @@ extension NSTextCheckingResult {
     struct Iterator: IteratorProtocol {
         typealias Element = NSRange
         
-        private var index: Int = 0
+        private var index = 0
         private let collection: NSTextCheckingResult
         
         init(collection: NSTextCheckingResult) {
@@ -173,6 +171,6 @@ extension NSTextCheckingResult {
 
 extension NSTextCheckingResult {
     var ranges: IteratorSequence<NSTextCheckingResult.Iterator> {
-        return .init(.init(collection: self))
+        .init(.init(collection: self))
     }
 }
