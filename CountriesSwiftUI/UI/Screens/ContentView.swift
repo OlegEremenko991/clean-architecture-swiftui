@@ -12,7 +12,6 @@ import Combine
 // MARK: - View
 
 struct ContentView: View {
-    
     @ObservedObject private(set) var viewModel: ViewModel
     
     var body: some View {
