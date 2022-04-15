@@ -21,7 +21,7 @@ struct ContentView: View {
                 Text("Running unit tests")
             } else {
                 CountriesList(viewModel: .init(container: viewModel.container))
-                    .modifier(RootViewAppearance(viewModel: .init(container: viewModel.container)))
+                    .modifier(RootViewAppearance())
             }
         }
     }
