@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -51,7 +51,6 @@
 		F695DF892455AD9300A65A04 /* DeepLinksHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F695DF872455A28200A65A04 /* DeepLinksHandler.swift */; };
 		F695DF8B2455B04100A65A04 /* UserPermissionsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F695DF8A2455B04100A65A04 /* UserPermissionsService.swift */; };
 		F695DF8D2455D36900A65A04 /* PushTokenWebRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = F695DF8C2455D36900A65A04 /* PushTokenWebRepository.swift */; };
-		F6B6212423B52AE600CD00C7 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = F6B6212323B52AE600CD00C7 /* ViewInspector */; };
 		F6BDB91623636865003E69F2 /* DetailRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6BDB91523636865003E69F2 /* DetailRow.swift */; };
 		F6BDB91823637C5F003E69F2 /* ActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6BDB91723637C5F003E69F2 /* ActivityIndicatorView.swift */; };
 		F6BDB91A236382E7003E69F2 /* SVGImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6BDB919236382E7003E69F2 /* SVGImageView.swift */; };
@@ -138,7 +137,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6B6212423B52AE600CD00C7 /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,7 +359,6 @@
 			);
 			name = UnitTests;
 			packageProductDependencies = (
-				F6B6212323B52AE600CD00C7 /* ViewInspector */,
 			);
 			productName = UnitTests;
 			productReference = F67833D22369CCBD0065272F /* UnitTests.xctest */;
@@ -400,7 +397,6 @@
 			);
 			mainGroup = F64495D82360D66400C9BB1F;
 			packageReferences = (
-				F6B6212223B52AE600CD00C7 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 			);
 			productRefGroup = F64495E22360D66400C9BB1F /* Products */;
 			projectDirPath = "";
@@ -792,25 +788,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		F6B6212223B52AE600CD00C7 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/nalexn/ViewInspector";
-			requirement = {
-				kind = exactVersion;
-				version = 0.9.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		F6B6212323B52AE600CD00C7 /* ViewInspector */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F6B6212223B52AE600CD00C7 /* XCRemoteSwiftPackageReference "ViewInspector" */;
-			productName = ViewInspector;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		F633BA5024432ACE00402237 /* db_model_v1.xcdatamodeld */ = {
