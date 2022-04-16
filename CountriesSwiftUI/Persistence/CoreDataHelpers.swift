@@ -24,7 +24,7 @@ extension ManagedEntity where Self: NSManagedObject {
     }
     
     static func newFetchRequest() -> NSFetchRequest<Self> {
-        return .init(entityName: entityName)
+        .init(entityName: entityName)
     }
 }
 

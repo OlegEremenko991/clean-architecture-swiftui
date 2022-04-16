@@ -14,7 +14,7 @@ struct CountryCell: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text(country.name(locale: locale))
+            Text(country.name(with: locale))
                 .font(.title)
             Text("Population \(country.population)")
                 .font(.caption)

@@ -51,13 +51,13 @@ extension Binding where Value: Equatable {
     typealias ValueClosure = (Value) -> Void
     
     func onSet(_ perform: @escaping ValueClosure) -> Self {
-        return .init(get: { () -> Value in
-            self.wrappedValue
-        }, set: { value in
-            if self.wrappedValue != value {
-                self.wrappedValue = value
+        .init { () -> Value in
+            wrappedValue
+        } set: { value in
+            if wrappedValue != value {
+                wrappedValue = value
             }
             perform(value)
-        })
+        }
     }
 }

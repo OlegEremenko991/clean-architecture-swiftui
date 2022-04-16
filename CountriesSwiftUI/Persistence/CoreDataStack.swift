@@ -38,7 +38,7 @@ struct CoreDataStack: PersistentStore {
             container.persistentStoreDescriptions = [store]
         }
         bgQueue.async { [weak isStoreLoaded, weak container] in
-            container?.loadPersistentStores { (storeDescription, error) in
+            container?.loadPersistentStores { storeDescription, error in
                 DispatchQueue.main.async {
                     if let error = error {
                         isStoreLoaded?.send(completion: .failure(error))

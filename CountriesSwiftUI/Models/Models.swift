@@ -51,7 +51,7 @@ extension Country.Currency: Identifiable {
 }
 
 extension Country {
-    func name(locale: Locale) -> String {
+    func name(with locale: Locale) -> String {
         let localeId = locale.shortIdentifier
         if let value = translations[localeId], let localizedName = value {
             return localizedName

@@ -24,11 +24,10 @@ struct SVGImageView: View {
 }
 
 // MARK: - Content
-
 private extension SVGImageView {
     var notRequestedView: some View {
         Text("").onAppear {
-            self.viewModel.loadImage()
+            viewModel.loadImage()
         }
     }
     

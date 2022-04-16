@@ -30,13 +30,12 @@ extension CountriesList {
 // MARK: - ViewModel
 
 extension CountriesList {
-    class ViewModel: ObservableObject {
-        
+    final class ViewModel: ObservableObject {
         // State
         @Published var routingState: Routing
         @Published var countriesSearch = CountriesSearch()
         @Published var countries: Loadable<LazyList<Country>>
-        @Published var canRequestPushPermission: Bool = false
+        @Published var canRequestPushPermission = false
         
         // Misc
         let container: DIContainer

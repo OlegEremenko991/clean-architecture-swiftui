@@ -30,14 +30,13 @@ struct ModalDetailsView: View {
     }
     
     private var closeButton: some View {
-        Button(action: self.viewModel.close, label: { Text("Close") })
+        Button(action: viewModel.close, label: { Text("Close") })
     }
 }
 
 // MARK: - ViewModel
-
 extension ModalDetailsView {
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         // State
         let country: Country
         var isDisplayed: Binding<Bool>
@@ -46,7 +45,11 @@ extension ModalDetailsView {
         let container: DIContainer
         private var cancelBag = CancelBag()
         
-        init(container: DIContainer, country: Country, isDisplayed: Binding<Bool>) {
+        init(
+            container: DIContainer,
+            country: Country,
+            isDisplayed: Binding<Bool>
+        ) {
             self.country = country
             self.isDisplayed = isDisplayed
             self.container = container
@@ -61,7 +64,7 @@ extension ModalDetailsView {
 
 #if DEBUG
 struct ModalDetailsView_Previews: PreviewProvider {
-    @State static var isDisplayed: Bool = true
+    @State static var isDisplayed = true
     
     static var previews: some View {
         ModalDetailsView(viewModel: .init(

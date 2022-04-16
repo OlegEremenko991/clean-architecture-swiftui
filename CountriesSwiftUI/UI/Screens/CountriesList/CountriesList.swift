@@ -10,17 +10,16 @@ import SwiftUI
 import Combine
 
 struct CountriesList: View {
-    
     @ObservedObject private(set) var viewModel: ViewModel
     @Environment(\.locale) private var locale: Locale
     
     var body: some View {
         GeometryReader { geometry in
             NavigationView {
-                self.content
-                    .navigationBarItems(trailing: self.permissionsButton)
+                content
+                    .navigationBarItems(trailing: permissionsButton)
                     .navigationBarTitle("Countries")
-                    .navigationBarHidden(self.viewModel.countriesSearch.keyboardHeight > 0)
+                    .navigationBarHidden(viewModel.countriesSearch.keyboardHeight > .zero)
                     .animation(.easeOut(duration: 0.3))
             }
             .navigationViewStyle(DoubleColumnNavigationViewStyle())
@@ -49,7 +48,6 @@ struct CountriesList: View {
 }
 
 // MARK: - Loading Content
-
 private extension CountriesList {
     var notRequestedView: some View {
         Text("").onAppear(perform: self.viewModel.reloadCountries)
@@ -64,32 +62,32 @@ private extension CountriesList {
     }
     
     func failedView(_ error: Error) -> some View {
-        ErrorView(error: error, retryAction: {
-            self.viewModel.reloadCountries()
-        })
+        ErrorView(error: error) {
+            viewModel.reloadCountries()
+        }
     }
 }
 
 // MARK: - Displaying Content
-
 private extension CountriesList {
     func loadedView(_ countries: LazyList<Country>, showSearch: Bool, showLoading: Bool) -> some View {
         VStack {
             if showSearch {
-                SearchBar(text: $viewModel.countriesSearch.searchText.onSet({ _ in
-                    self.viewModel.reloadCountries()
-                }))
+                SearchBar(text: $viewModel.countriesSearch.searchText.onSet { _ in
+                    viewModel.reloadCountries()
+                })
             }
             if showLoading {
                 ActivityIndicatorView().padding()
             }
             List(countries) { country in
                 NavigationLink(
-                    destination: self.detailsView(country: country),
+                    destination: detailsView(country: country),
                     tag: country.alpha3Code,
-                    selection: self.$viewModel.routingState.countryDetails) {
-                        CountryCell(country: country)
-                    }
+                    selection: $viewModel.routingState.countryDetails
+                ) {
+                    CountryCell(country: country)
+                }
             }
         }.padding(.bottom, bottomInset)
     }
@@ -100,15 +98,14 @@ private extension CountriesList {
     
     var bottomInset: CGFloat {
         if #available(iOS 14, *) {
-            return 0
+            return .zero
         } else {
-            return self.viewModel.countriesSearch.keyboardHeight
+            return viewModel.countriesSearch.keyboardHeight
         }
     }
 }
 
 // MARK: - Preview
-
 #if DEBUG
 struct CountriesList_Previews: PreviewProvider {
     static var previews: some View {

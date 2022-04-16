@@ -9,7 +9,6 @@
 import SwiftUI
 import Combine
 
-// MARK: - DIContainer
 struct DIContainer: EnvironmentKey {
     let appState: Store<AppState>
     let services: Services

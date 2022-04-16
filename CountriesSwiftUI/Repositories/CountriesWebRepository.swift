@@ -42,7 +42,6 @@ struct RealCountriesWebRepository: CountriesWebRepository {
 }
 
 // MARK: - Endpoints
-
 extension RealCountriesWebRepository {
     enum API {
         case allCountries

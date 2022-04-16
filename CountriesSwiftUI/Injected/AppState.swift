@@ -10,21 +10,9 @@ import SwiftUI
 import Combine
 
 struct AppState: Equatable {
-    var userData = UserData()
     var routing = ViewRouting()
     var system = System()
     var permissions = Permissions()
-}
-
-extension AppState {
-    struct UserData: Equatable {
-        /*
-         The list of countries (Loadable<[Country]>) used to be stored here.
-         It was removed for performing countries' search by name inside a database,
-         which made the resulting variable used locally by just one screen (CountriesList)
-         Otherwise, the list of countries could have remained here, available for the entire app.
-         */
-    }
 }
 
 extension AppState {
@@ -37,7 +25,7 @@ extension AppState {
 extension AppState {
     struct System: Equatable {
         var isActive = false
-        var keyboardHeight: CGFloat = 0
+        var keyboardHeight = CGFloat.zero
     }
 }
 
@@ -53,13 +41,6 @@ extension AppState {
             return pathToPermissions.appending(path: \.push)
         }
     }
-}
-
-func == (lhs: AppState, rhs: AppState) -> Bool {
-    lhs.userData == rhs.userData
-    && lhs.routing == rhs.routing
-    && lhs.system == rhs.system
-    && lhs.permissions == rhs.permissions
 }
 
 #if DEBUG

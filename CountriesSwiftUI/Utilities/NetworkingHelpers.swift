@@ -12,14 +12,16 @@ import Foundation
 
 extension Just where Output == Void {
     static func withErrorType<E>(_ errorType: E.Type) -> AnyPublisher<Void, E> {
-        return withErrorType((), E.self)
+        withErrorType((), E.self)
     }
 }
 
 extension Just {
-    static func withErrorType<E>(_ value: Output, _ errorType: E.Type
+    static func withErrorType<E>(
+        _ value: Output,
+        _ errorType: E.Type
     ) -> AnyPublisher<Output, E> {
-        return Just(value)
+        Just(value)
             .setFailureType(to: E.self)
             .eraseToAnyPublisher()
     }
@@ -27,25 +29,23 @@ extension Just {
 
 extension Publisher {
     func sinkToResult(_ result: @escaping (Result<Output, Failure>) -> Void) -> AnyCancellable {
-        sink(receiveCompletion: { completion in
-            switch completion {
-            case let .failure(error):
+        sink { completion in
+            if let error = completion.error {
                 result(.failure(error))
-            default: break
             }
-        }, receiveValue: { value in
+        } receiveValue: { value in
             result(.success(value))
-        })
+        }
     }
     
     func sinkToLoadable(_ completion: @escaping (Loadable<Output>) -> Void) -> AnyCancellable {
-        sink(receiveCompletion: { subscriptionCompletion in
+        sink { subscriptionCompletion in
             if let error = subscriptionCompletion.error {
                 completion(.failed(error))
             }
-        }, receiveValue: { value in
+        } receiveValue: { value in
             completion(.loaded(value))
-        })
+        }
     }
     
     func extractUnderlyingError() -> Publishers.MapError<Self, Failure> {

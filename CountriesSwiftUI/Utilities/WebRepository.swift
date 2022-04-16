@@ -29,8 +29,6 @@ extension WebRepository {
     }
 }
 
-// MARK: - Helpers
-
 private extension Publisher where Output == URLSession.DataTaskPublisher.Output {
     func requestJSON<Value>(httpCodes: HTTPCodes) -> AnyPublisher<Value, Error> where Value: Decodable {
         tryMap {

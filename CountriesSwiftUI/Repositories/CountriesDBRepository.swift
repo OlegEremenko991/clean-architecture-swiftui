@@ -13,10 +13,16 @@ protocol CountriesDBRepository {
     func hasLoadedCountries() -> AnyPublisher<Bool, Error>
     
     func store(countries: [Country]) -> AnyPublisher<Void, Error>
-    func countries(search: String, locale: Locale) -> AnyPublisher<LazyList<Country>, Error>
+    func countries(
+        search: String,
+        locale: Locale
+    ) -> AnyPublisher<LazyList<Country>, Error>
     
-    func store(countryDetails: Country.Details.Intermediate,
-               for country: Country) -> AnyPublisher<Country.Details?, Error>
+    func store(
+        countryDetails: Country.Details.Intermediate,
+        for country: Country
+    ) -> AnyPublisher<Country.Details?, Error>
+
     func countryDetails(country: Country) -> AnyPublisher<Country.Details?, Error>
 }
 
@@ -52,8 +58,9 @@ struct RealCountriesDBRepository: CountriesDBRepository {
     ) -> AnyPublisher<Country.Details?, Error> {
         persistentStore.update { context in
             let parentRequest = CountryMO.countries(alpha3codes: [country.alpha3Code])
-            guard let parent = try context.fetch(parentRequest).first
-            else { return nil }
+            guard let parent = try context.fetch(parentRequest).first else {
+                return nil
+            }
             let neighbors = CountryMO.countries(alpha3codes: countryDetails.borders)
             let borders = try context.fetch(neighbors)
             let details = countryDetails.store(in: context, country: parent, borders: borders)
@@ -73,7 +80,6 @@ struct RealCountriesDBRepository: CountriesDBRepository {
 }
 
 // MARK: - Fetch Requests
-
 extension CountryMO {
     static func justOneCountry() -> NSFetchRequest<CountryMO> {
         let request = newFetchRequest()
