@@ -46,6 +46,7 @@ struct ModalDetailsView_Previews: PreviewProvider {
     @State static var isDisplayed: Bool = true
     
     static var previews: some View {
+        // possible fix https://stackoverflow.com/a/63979934/11830041
         ModalDetailsView(country: Country.mockedData[0], isDisplayed: $isDisplayed)
             .inject(.preview)
     }

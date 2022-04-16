@@ -13,19 +13,19 @@ import Combine
 
 final class DeepLinkUITests: XCTestCase {
     
-    func test_countriesList_selectsCountry() {
-        
-        let store = appStateWithDeepLink()
-        let interactors = mockedInteractors(store: store)
-        let container = DIContainer(appState: store, interactors: interactors)
-        let sut = CountriesList()
-        let exp = sut.inspection.inspect(after: 0.1) { view in
-            let firstRowLink = try view.content().find(ViewType.NavigationLink.self)
-            XCTAssertTrue(try firstRowLink.isActive())
-        }
-        ViewHosting.host(view: sut.inject(container))
-        wait(for: [exp], timeout: 2)
-    }
+//    func test_countriesList_selectsCountry() {
+//        
+//        let store = appStateWithDeepLink()
+//        let interactors = mockedInteractors(store: store)
+//        let container = DIContainer(appState: store, interactors: interactors)
+//        let sut = CountriesList()
+//        let exp = sut.inspection.inspect(after: 0.1) { view in
+//            let firstRowLink = try view.content().find(ViewType.NavigationLink.self)
+//            XCTAssertTrue(try firstRowLink.isActive())
+//        }
+//        ViewHosting.host(view: sut.inject(container))
+//        wait(for: [exp], timeout: 2)
+//    }
     
     func test_countryDetails_presentsSheet() {
         

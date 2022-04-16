@@ -362,21 +362,7 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
         sut.load(countryDetails: details.binding, country: Country.mockedData[0])
     }
     
-    // MARK: - Helper
-    
-    private func recordAppStateUserDataUpdates(for timeInterval: TimeInterval = 0.5)
-        -> AnyPublisher<[AppState.UserData], Never> {
-        return Future<[AppState.UserData], Never> { (completion) in
-            var updates = [AppState.UserData]()
-            self.appState.map(\.userData)
-                .sink { updates.append($0 )}
-                .store(in: &self.subscriptions)
-            DispatchQueue.main.asyncAfter(deadline: .now() + timeInterval) {
-                completion(.success(updates))
-            }
-        }.eraseToAnyPublisher()
-    }
-    
+    // MARK: - Helper    
     private func countryDetails(neighbors: [Country])
         -> (intermediate: Country.Details.Intermediate, details: Country.Details) {
         let intermediate = Country.Details.Intermediate(

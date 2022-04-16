@@ -48,6 +48,7 @@ struct CountryDetails: View {
 
 private extension CountryDetails {
     func loadCountryDetails() {
+        // possible fix https://stackoverflow.com/a/63979934/11830041
         injected.interactors.countriesInteractor
             .load(countryDetails: $details, country: country)
     }
