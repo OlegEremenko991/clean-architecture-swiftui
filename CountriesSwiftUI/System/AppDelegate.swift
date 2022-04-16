@@ -14,7 +14,7 @@ typealias FetchCompletion = (UIBackgroundFetchResult) -> Void
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-    lazy var systemEventsHandler: SystemEventsHandler? = {
+    private lazy var systemEventsHandler: SystemEventsHandler? = {
         systemEventsHandler(UIApplication.shared)
     }()
 
