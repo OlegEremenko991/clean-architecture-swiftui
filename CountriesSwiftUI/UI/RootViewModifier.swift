@@ -13,13 +13,15 @@ import Combine
 
 struct RootViewAppearance: ViewModifier {
     @Environment(\.injected) private var injected: DIContainer
-    internal let inspection = Inspection<Self>()
+    @State private var isActive = false
+    let inspection = Inspection<Self>()
     
     func body(content: Content) -> some View {
         content
+            .onReceive(stateUpdate) { self.isActive = $0 }
             .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
-    
+
     private var stateUpdate: AnyPublisher<Bool, Never> {
         injected.appState.updates(for: \.system.isActive)
     }
