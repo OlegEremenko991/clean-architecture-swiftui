@@ -9,7 +9,6 @@
 import UIKit
 import SwiftUI
 import Combine
-import Foundation
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 

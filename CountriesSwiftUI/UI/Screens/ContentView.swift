@@ -8,7 +8,6 @@
 
 import SwiftUI
 import Combine
-import EnvironmentOverrides
 
 struct ContentView: View {
     
@@ -26,16 +25,7 @@ struct ContentView: View {
                 Text("Running unit tests")
             } else {
                 CountriesList()
-                    .attachEnvironmentOverrides(onChange: onChangeHandler)
                     .inject(container)
-            }
-        }
-    }
-    
-    var onChangeHandler: (EnvironmentValues.Diff) -> Void {
-        return { diff in
-            if !diff.isDisjoint(with: [.locale, .sizeCategory]) {
-                self.container.appState[\.routing] = AppState.ViewRouting()
             }
         }
     }
