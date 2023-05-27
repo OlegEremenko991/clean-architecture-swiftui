@@ -6,15 +6,14 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
-import ViewInspector
 import Combine
 @testable import CountriesSwiftUI
+import ViewInspector
+import XCTest
 
 final class DeepLinkUITests: XCTestCase {
-    
 //    func test_countriesList_selectsCountry() {
-//        
+//
 //        let store = appStateWithDeepLink()
 //        let interactors = mockedInteractors(store: store)
 //        let container = DIContainer(appState: store, interactors: interactors)
@@ -26,9 +25,8 @@ final class DeepLinkUITests: XCTestCase {
 //        ViewHosting.host(view: sut.inject(container))
 //        wait(for: [exp], timeout: 2)
 //    }
-    
+
     func test_countryDetails_presentsSheet() {
-        
         let store = appStateWithDeepLink()
         let interactors = mockedInteractors(store: store)
         let container = DIContainer(appState: store, interactors: interactors)
@@ -45,7 +43,6 @@ final class DeepLinkUITests: XCTestCase {
 // MARK: - Setup
 
 private extension DeepLinkUITests {
-    
     func appStateWithDeepLink() -> Store<AppState> {
         let countries = Country.mockedData
         var appState = AppState()
@@ -53,37 +50,36 @@ private extension DeepLinkUITests {
         appState.routing.countryDetails.detailsSheet = true
         return Store(appState)
     }
-    
+
     func mockedInteractors(store: Store<AppState>) -> DIContainer.Interactors {
-        
         let countries = Country.mockedData
         let testImage = UIColor.red.image(CGSize(width: 40, height: 40))
         let detailsIntermediate = Country.Details.Intermediate(capital: "", currencies: [], borders: [])
         let details = Country.Details(capital: "", currencies: [], neighbors: [])
-        
+
         let countriesDBRepo = MockedCountriesDBRepository()
         let countriesWebRepo = MockedCountriesWebRepository()
         let imagesRepo = MockedImageWebRepository()
-        
+
         // Mocking successful loading the list of countries:
         countriesDBRepo.hasLoadedCountriesResult = .success(false)
         countriesWebRepo.countriesResponse = .success(countries)
         countriesDBRepo.storeCountriesResult = .success(())
         countriesDBRepo.fetchCountriesResult = .success(countries.lazyList)
-        
+
         // Mocking successful loading the country details:
         countriesDBRepo.fetchCountryDetailsResult = .success(nil)
         countriesWebRepo.detailsResponse = .success(detailsIntermediate)
         countriesDBRepo.storeCountryDetailsResult = .success(details)
-        
+
         // Mocking successful loading of the flag:
         imagesRepo.imageResponse = .success(testImage)
-        
+
         let countriesInteractor = RealCountriesInteractor(webRepository: countriesWebRepo,
                                                           dbRepository: countriesDBRepo,
                                                           appState: store)
         let imagesInteractor = RealImagesInteractor(webRepository: imagesRepo)
-        let permissionsInteractor = RealUserPermissionsInteractor(appState: store, openAppSettings: { })
+        let permissionsInteractor = RealUserPermissionsInteractor(appState: store, openAppSettings: {})
         return DIContainer.Interactors(countriesInteractor: countriesInteractor,
                                        imagesInteractor: imagesInteractor,
                                        userPermissionsInteractor: permissionsInteractor)

@@ -19,17 +19,17 @@ extension URLSession {
 }
 
 extension RequestMocking {
-    static private var mocks: [MockedResponse] = []
-    
+    private static var mocks: [MockedResponse] = []
+
     static func add(mock: MockedResponse) {
         mocks.append(mock)
     }
-    
+
     static func removeAllMocks() {
         mocks.removeAll()
     }
-    
-    static private func mock(for request: URLRequest) -> MockedResponse? {
+
+    private static func mock(for request: URLRequest) -> MockedResponse? {
         return mocks.first { $0.url == request.url }
     }
 }
@@ -37,7 +37,6 @@ extension RequestMocking {
 // MARK: - RequestMocking
 
 final class RequestMocking: URLProtocol {
-
     override class func canInit(with request: URLRequest) -> Bool {
         return mock(for: request) != nil
     }
@@ -45,21 +44,22 @@ final class RequestMocking: URLProtocol {
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
         return request
     }
-    
+
     // swiftlint:disable identifier_name
-    override class func requestIsCacheEquivalent(_ a: URLRequest, to b: URLRequest) -> Bool {
-    // swiftlint:enable identifier_name
+    override class func requestIsCacheEquivalent(_: URLRequest, to _: URLRequest) -> Bool {
+        // swiftlint:enable identifier_name
         return false
     }
 
     override func startLoading() {
         if let mock = RequestMocking.mock(for: request),
-            let url = request.url,
-            let response = mock.customResponse ??
-                HTTPURLResponse(url: url,
-                statusCode: mock.httpCode,
-                httpVersion: "HTTP/1.1",
-                headerFields: mock.headers) {
+           let url = request.url,
+           let response = mock.customResponse ??
+           HTTPURLResponse(url: url,
+                           statusCode: mock.httpCode,
+                           httpVersion: "HTTP/1.1",
+                           headerFields: mock.headers)
+        {
             DispatchQueue.main.asyncAfter(deadline: .now() + mock.loadingTime) { [weak self] in
                 guard let self = self else { return }
                 self.client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
@@ -76,7 +76,7 @@ final class RequestMocking: URLProtocol {
         }
     }
 
-    override func stopLoading() { }
+    override func stopLoading() {}
 }
 
 // MARK: - RequestBlocking
@@ -85,8 +85,8 @@ private class RequestBlocking: URLProtocol {
     enum Error: Swift.Error {
         case requestBlocked
     }
-    
-    override class func canInit(with request: URLRequest) -> Bool {
+
+    override class func canInit(with _: URLRequest) -> Bool {
         return true
     }
 
@@ -99,5 +99,6 @@ private class RequestBlocking: URLProtocol {
             self.client?.urlProtocol(self, didFailWithError: Error.requestBlocked)
         }
     }
-    override func stopLoading() { }
+
+    override func stopLoading() {}
 }

@@ -6,15 +6,14 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
+@testable import CountriesSwiftUI
 import SwiftUI
 import ViewInspector
-@testable import CountriesSwiftUI
+import XCTest
 
-extension SVGImageView: Inspectable { }
+extension SVGImageView: Inspectable {}
 
 final class SVGImageViewTests: XCTestCase {
-
     let url = URL(string: "https://test.com/test.png")!
 
     func test_imageView_notRequested() {
@@ -28,7 +27,7 @@ final class SVGImageViewTests: XCTestCase {
         ViewHosting.host(view: sut.inject(AppState(), interactors))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_imageView_isLoading_initial() {
         let interactors = DIContainer.Interactors.mocked()
         let sut = SVGImageView(imageURL: url, image:
@@ -40,7 +39,7 @@ final class SVGImageViewTests: XCTestCase {
         ViewHosting.host(view: sut.inject(AppState(), interactors))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_imageView_isLoading_refresh() {
         let interactors = DIContainer.Interactors.mocked()
         let image = UIColor.red.image(CGSize(width: 10, height: 10))
@@ -53,7 +52,7 @@ final class SVGImageViewTests: XCTestCase {
         ViewHosting.host(view: sut.inject(AppState(), interactors))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_imageView_loaded() {
         let interactors = DIContainer.Interactors.mocked()
         let image = UIColor.red.image(CGSize(width: 10, height: 10))
@@ -66,7 +65,7 @@ final class SVGImageViewTests: XCTestCase {
         ViewHosting.host(view: sut.inject(AppState(), interactors))
         wait(for: [exp], timeout: 3)
     }
-    
+
     func test_imageView_failed() {
         let interactors = DIContainer.Interactors.mocked()
         let sut = SVGImageView(imageURL: url, image: .failed(NSError.test))

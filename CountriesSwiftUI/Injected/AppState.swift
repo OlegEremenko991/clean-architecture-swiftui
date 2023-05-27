@@ -6,8 +6,8 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct AppState: Equatable {
     var routing = ViewRouting()
@@ -33,7 +33,7 @@ extension AppState {
     struct Permissions: Equatable {
         var push: Permission.Status = .unknown
     }
-    
+
     static func permissionKeyPath(for permission: Permission) -> WritableKeyPath<AppState, Permission.Status> {
         let pathToPermissions = \AppState.permissions
         switch permission {
@@ -44,11 +44,11 @@ extension AppState {
 }
 
 #if DEBUG
-extension AppState {
-    static var preview: AppState {
-        var state = AppState()
-        state.system.isActive = true
-        return state
+    extension AppState {
+        static var preview: AppState {
+            var state = AppState()
+            state.system.isActive = true
+            return state
+        }
     }
-}
 #endif

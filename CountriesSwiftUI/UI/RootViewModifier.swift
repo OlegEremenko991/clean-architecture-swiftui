@@ -6,8 +6,8 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 // MARK: - RootViewAppearance
 
@@ -15,7 +15,7 @@ struct RootViewAppearance: ViewModifier {
     @Environment(\.injected) private var injected: DIContainer
     @State private var isActive = false
     let inspection = Inspection<Self>()
-    
+
     func body(content: Content) -> some View {
         content
             .onReceive(stateUpdate) { self.isActive = $0 }

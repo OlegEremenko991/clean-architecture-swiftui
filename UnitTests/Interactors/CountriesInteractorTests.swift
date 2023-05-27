@@ -6,13 +6,12 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
-import SwiftUI
 import Combine
 @testable import CountriesSwiftUI
+import SwiftUI
+import XCTest
 
 class CountriesInteractorTests: XCTestCase {
-
     let appState = CurrentValueSubject<AppState, Never>(AppState())
     var mockedWebRepo: MockedCountriesWebRepository!
     var mockedDBRepo: MockedCountriesDBRepository!
@@ -36,24 +35,23 @@ class CountriesInteractorTests: XCTestCase {
 // MARK: - load(countries: search: locale:)
 
 final class LoadCountriesTests: CountriesInteractorTests {
-    
     func test_filledDB_successfulSearch() {
         let list = Country.mockedData
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
         ])
         mockedDBRepo.actions = .init(expected: [
             .hasLoadedCountries,
-            .fetchCountries(search: "abc", locale: .backendDefault)
+            .fetchCountries(search: "abc", locale: .backendDefault),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedDBRepo.hasLoadedCountriesResult = .success(true)
         mockedDBRepo.fetchCountriesResult = .success(list.lazyList)
-        
+
         let countries = BindingWithPublisher(value: Loadable<LazyList<Country>>.notRequested)
         sut.load(countries: countries.binding, search: "abc", locale: .backendDefault)
         let exp = XCTestExpectation(description: #function)
@@ -61,7 +59,7 @@ final class LoadCountriesTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .loaded(list.lazyList)
+                .loaded(list.lazyList),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -69,24 +67,24 @@ final class LoadCountriesTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_filledDB_failedSearch() {
         let error = NSError.test
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
         ])
         mockedDBRepo.actions = .init(expected: [
             .hasLoadedCountries,
-            .fetchCountries(search: "abc", locale: .backendDefault)
+            .fetchCountries(search: "abc", locale: .backendDefault),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedDBRepo.hasLoadedCountriesResult = .success(true)
         mockedDBRepo.fetchCountriesResult = .failure(error)
-        
+
         let countries = BindingWithPublisher(value: Loadable<LazyList<Country>>.notRequested)
         sut.load(countries: countries.binding, search: "abc", locale: .backendDefault)
         let exp = XCTestExpectation(description: #function)
@@ -94,7 +92,7 @@ final class LoadCountriesTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .failed(error)
+                .failed(error),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -102,24 +100,24 @@ final class LoadCountriesTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_emptyDB_failedRequest() {
         let error = NSError.test
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
-            .loadCountries
+            .loadCountries,
         ])
         mockedDBRepo.actions = .init(expected: [
-            .hasLoadedCountries
+            .hasLoadedCountries,
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedWebRepo.countriesResponse = .failure(error)
         mockedDBRepo.hasLoadedCountriesResult = .success(false)
-        
+
         let countries = BindingWithPublisher(value: Loadable<LazyList<Country>>.notRequested)
         sut.load(countries: countries.binding, search: "abc", locale: .backendDefault)
         let exp = XCTestExpectation(description: #function)
@@ -127,7 +125,7 @@ final class LoadCountriesTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .failed(error)
+                .failed(error),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -135,28 +133,28 @@ final class LoadCountriesTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_emptyDB_successfulRequest_successfulStoring() {
         let list = Country.mockedData
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
-            .loadCountries
+            .loadCountries,
         ])
         mockedDBRepo.actions = .init(expected: [
             .hasLoadedCountries,
             .storeCountries(list),
-            .fetchCountries(search: "abc", locale: .backendDefault)
+            .fetchCountries(search: "abc", locale: .backendDefault),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedWebRepo.countriesResponse = .success(list)
         mockedDBRepo.hasLoadedCountriesResult = .success(false)
         mockedDBRepo.storeCountriesResult = .success(())
         mockedDBRepo.fetchCountriesResult = .success(list.lazyList)
-        
+
         let countries = BindingWithPublisher(value: Loadable<LazyList<Country>>.notRequested)
         sut.load(countries: countries.binding, search: "abc", locale: .backendDefault)
         let exp = XCTestExpectation(description: #function)
@@ -164,7 +162,7 @@ final class LoadCountriesTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .loaded(list.lazyList)
+                .loaded(list.lazyList),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -172,27 +170,27 @@ final class LoadCountriesTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_emptyDB_successfulRequest_failedStoring() {
         let list = Country.mockedData
         let error = NSError.test
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
-            .loadCountries
+            .loadCountries,
         ])
         mockedDBRepo.actions = .init(expected: [
             .hasLoadedCountries,
-            .storeCountries(list)
+            .storeCountries(list),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedWebRepo.countriesResponse = .success(list)
         mockedDBRepo.hasLoadedCountriesResult = .success(false)
         mockedDBRepo.storeCountriesResult = .failure(error)
-        
+
         let countries = BindingWithPublisher(value: Loadable<LazyList<Country>>.notRequested)
         sut.load(countries: countries.binding, search: "abc", locale: .backendDefault)
         let exp = XCTestExpectation(description: #function)
@@ -200,7 +198,7 @@ final class LoadCountriesTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .failed(error)
+                .failed(error),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -213,23 +211,22 @@ final class LoadCountriesTests: CountriesInteractorTests {
 // MARK: - load(countryDetails: country: )
 
 final class LoadCountryDetailsTests: CountriesInteractorTests {
-    
     func test_filledDB_successfulSearch() {
         let country = Country.mockedData[0]
         let data = countryDetails(neighbors: [])
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
         ])
         mockedDBRepo.actions = .init(expected: [
-            .fetchCountryDetails(country)
+            .fetchCountryDetails(country),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedDBRepo.fetchCountryDetailsResult = .success(data.details)
-        
+
         let details = BindingWithPublisher(value: Loadable<Country.Details>.notRequested)
         sut.load(countryDetails: details.binding, country: country)
         let exp = XCTestExpectation(description: #function)
@@ -237,7 +234,7 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .loaded(data.details)
+                .loaded(data.details),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -245,25 +242,25 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_filledDB_dataNotFound_failedRequest() {
         let country = Country.mockedData[0]
         let error = NSError.test
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
-            .loadCountryDetails(country)
+            .loadCountryDetails(country),
         ])
         mockedDBRepo.actions = .init(expected: [
-            .fetchCountryDetails(country)
+            .fetchCountryDetails(country),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedDBRepo.fetchCountryDetailsResult = .success(nil)
         mockedWebRepo.detailsResponse = .failure(error)
-        
+
         let details = BindingWithPublisher(value: Loadable<Country.Details>.notRequested)
         sut.load(countryDetails: details.binding, country: country)
         let exp = XCTestExpectation(description: #function)
@@ -271,7 +268,7 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .failed(error)
+                .failed(error),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -279,28 +276,28 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_filledDB_dataNotFound_successfulRequest_failedStoring() {
         let country = Country.mockedData[0]
         let data = countryDetails(neighbors: [])
         let error = NSError.test
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
-            .loadCountryDetails(country)
+            .loadCountryDetails(country),
         ])
         mockedDBRepo.actions = .init(expected: [
             .fetchCountryDetails(country),
-            .storeCountryDetails(data.intermediate)
+            .storeCountryDetails(data.intermediate),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedDBRepo.fetchCountryDetailsResult = .success(nil)
         mockedWebRepo.detailsResponse = .success(data.intermediate)
         mockedDBRepo.storeCountryDetailsResult = .failure(error)
-        
+
         let details = BindingWithPublisher(value: Loadable<Country.Details>.notRequested)
         sut.load(countryDetails: details.binding, country: country)
         let exp = XCTestExpectation(description: #function)
@@ -308,7 +305,7 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .failed(error)
+                .failed(error),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -316,27 +313,27 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_filledDB_dataNotFound_successfulRequest_successfulStoring() {
         let country = Country.mockedData[0]
         let data = countryDetails(neighbors: [])
-        
+
         // Configuring expected actions on repositories
-        
+
         mockedWebRepo.actions = .init(expected: [
-            .loadCountryDetails(country)
+            .loadCountryDetails(country),
         ])
         mockedDBRepo.actions = .init(expected: [
             .fetchCountryDetails(country),
-            .storeCountryDetails(data.intermediate)
+            .storeCountryDetails(data.intermediate),
         ])
-        
+
         // Configuring responses from repositories
-        
+
         mockedDBRepo.fetchCountryDetailsResult = .success(nil)
         mockedWebRepo.detailsResponse = .success(data.intermediate)
         mockedDBRepo.storeCountryDetailsResult = .success(data.details)
-        
+
         let details = BindingWithPublisher(value: Loadable<Country.Details>.notRequested)
         sut.load(countryDetails: details.binding, country: country)
         let exp = XCTestExpectation(description: #function)
@@ -344,7 +341,7 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .loaded(data.details)
+                .loaded(data.details),
             ], removing: Country.prefixes)
             self.mockedWebRepo.verify()
             self.mockedDBRepo.verify()
@@ -352,23 +349,26 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_stubInteractor() {
         let sut = StubCountriesInteractor()
-        sut.refreshCountriesList().sinkToResult({ _ in }).store(in: &subscriptions)
+        sut.refreshCountriesList().sinkToResult { _ in }.store(in: &subscriptions)
         let countries = BindingWithPublisher(value: Loadable<LazyList<Country>>.notRequested)
         sut.load(countries: countries.binding, search: "", locale: .backendDefault)
         let details = BindingWithPublisher(value: Loadable<Country.Details>.notRequested)
         sut.load(countryDetails: details.binding, country: Country.mockedData[0])
     }
-    
-    // MARK: - Helper    
+
+    // MARK: - Helper
+
     private func countryDetails(neighbors: [Country])
-        -> (intermediate: Country.Details.Intermediate, details: Country.Details) {
+        -> (intermediate: Country.Details.Intermediate, details: Country.Details)
+    {
         let intermediate = Country.Details.Intermediate(
             capital: "London",
             currencies: [Country.Currency(code: "12", symbol: "$", name: "US dollar")],
-            borders: neighbors.map { $0.alpha3Code })
+            borders: neighbors.map { $0.alpha3Code }
+        )
         let details = Country.Details(capital: intermediate.capital,
                                       currencies: intermediate.currencies,
                                       neighbors: neighbors)
@@ -376,5 +376,5 @@ final class LoadCountryDetailsTests: CountriesInteractorTests {
     }
 }
 
-extension Country: PrefixRemovable { }
-extension Country.Details: PrefixRemovable { }
+extension Country: PrefixRemovable {}
+extension Country.Details: PrefixRemovable {}

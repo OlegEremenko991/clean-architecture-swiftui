@@ -6,32 +6,31 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
 import Combine
 @testable import CountriesSwiftUI
+import XCTest
 
 final class ImagesInteractorTests: XCTestCase {
-    
     var sut: RealImagesInteractor!
     var mockedWebRepository: MockedImageWebRepository!
     var subscriptions = Set<AnyCancellable>()
     let testImageURL = URL(string: "https://test.com/test.png")!
     let testImage = UIColor.red.image(CGSize(width: 40, height: 40))
-    
+
     override func setUp() {
         mockedWebRepository = MockedImageWebRepository()
         sut = RealImagesInteractor(webRepository: mockedWebRepository)
         subscriptions = Set<AnyCancellable>()
     }
-    
+
     func expectRepoActions(_ actions: [MockedImageWebRepository.Action]) {
         mockedWebRepository.actions = .init(expected: actions)
     }
-    
+
     func verifyRepoActions(file: StaticString = #file, line: UInt = #line) {
         mockedWebRepository.verify(file: file, line: line)
     }
-    
+
     func test_loadImage_nilURL() {
         let image = BindingWithPublisher(value: Loadable<UIImage>.notRequested)
         expectRepoActions([])
@@ -40,14 +39,14 @@ final class ImagesInteractorTests: XCTestCase {
         image.updatesRecorder.sink { updates in
             XCTAssertEqual(updates, [
                 .notRequested,
-                .notRequested
+                .notRequested,
             ])
             self.verifyRepoActions()
             exp.fulfill()
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 1)
     }
-    
+
     func test_loadImage_loadedFromWeb() {
         let image = BindingWithPublisher(value: Loadable<UIImage>.notRequested)
         mockedWebRepository.imageResponse = .success(testImage)
@@ -58,14 +57,14 @@ final class ImagesInteractorTests: XCTestCase {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .loaded(self.testImage)
+                .loaded(self.testImage),
             ])
             self.verifyRepoActions()
             exp.fulfill()
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 1)
     }
-    
+
     func test_loadImage_failed() {
         let image = BindingWithPublisher(value: Loadable<UIImage>.notRequested)
         let error = NSError.test
@@ -77,14 +76,14 @@ final class ImagesInteractorTests: XCTestCase {
             XCTAssertEqual(updates, [
                 .notRequested,
                 .isLoading(last: nil, cancelBag: CancelBag()),
-                .failed(error)
+                .failed(error),
             ])
             self.verifyRepoActions()
             exp.fulfill()
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 1)
     }
-    
+
     func test_loadImage_hadLoadedImage() {
         let image = BindingWithPublisher(value: Loadable<UIImage>.loaded(testImage))
         let error = NSError.test
@@ -96,14 +95,14 @@ final class ImagesInteractorTests: XCTestCase {
             XCTAssertEqual(updates, [
                 .loaded(self.testImage),
                 .isLoading(last: self.testImage, cancelBag: CancelBag()),
-                .failed(error)
+                .failed(error),
             ])
             self.verifyRepoActions()
             exp.fulfill()
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 1)
     }
-    
+
     func test_stubInteractor() {
         let sut = StubImagesInteractor()
         let image = BindingWithPublisher(value: Loadable<UIImage>.notRequested)

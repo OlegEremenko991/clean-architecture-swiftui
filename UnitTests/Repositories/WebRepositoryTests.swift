@@ -6,15 +6,14 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
 import Combine
 @testable import CountriesSwiftUI
+import XCTest
 
 final class WebRepositoryTests: XCTestCase {
-    
     private var sut: TestWebRepository!
     private var subscriptions = Set<AnyCancellable>()
-    
+
     private typealias API = TestWebRepository.API
     typealias Mock = RequestMocking.MockedResponse
 
@@ -26,7 +25,7 @@ final class WebRepositoryTests: XCTestCase {
     override func tearDown() {
         RequestMocking.removeAllMocks()
     }
-    
+
     func test_webRepository_success() throws {
         let data = TestWebRepository.TestData()
         try mock(.test, result: .success(data))
@@ -38,7 +37,7 @@ final class WebRepositoryTests: XCTestCase {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_webRepository_parseError() throws {
         let data = Country.mockedData
         try mock(.test, result: .success(data))
@@ -50,7 +49,7 @@ final class WebRepositoryTests: XCTestCase {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_webRepository_httpCodeFailure() throws {
         let data = TestWebRepository.TestData()
         try mock(.test, result: .success(data), httpCode: 500)
@@ -62,7 +61,7 @@ final class WebRepositoryTests: XCTestCase {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_webRepository_networkingError() throws {
         let error = NSError.test
         try mock(.test, result: Result<TestWebRepository.TestData, Error>.failure(error))
@@ -74,7 +73,7 @@ final class WebRepositoryTests: XCTestCase {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_webRepository_requestURLError() {
         let exp = XCTestExpectation(description: "Completion")
         sut.load(.urlError).sinkToResult { result in
@@ -84,7 +83,7 @@ final class WebRepositoryTests: XCTestCase {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_webRepository_requestBodyError() {
         let exp = XCTestExpectation(description: "Completion")
         sut.load(.bodyError).sinkToResult { result in
@@ -94,7 +93,7 @@ final class WebRepositoryTests: XCTestCase {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_webRepository_loadableError() {
         let exp = XCTestExpectation(description: "Completion")
         let expected = APIError.invalidURL.localizedDescription
@@ -106,7 +105,7 @@ final class WebRepositoryTests: XCTestCase {
             }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_webRepository_noHttpCodeError() throws {
         let response = URLResponse(url: URL(fileURLWithPath: ""),
                                    mimeType: "example", expectedContentLength: 0, textEncodingName: nil)
@@ -120,11 +119,12 @@ final class WebRepositoryTests: XCTestCase {
         }.store(in: &subscriptions)
         wait(for: [exp], timeout: 2)
     }
-    
+
     // MARK: - Helper
-    
+
     private func mock<T>(_ apiCall: API, result: Result<T, Swift.Error>,
-                         httpCode: HTTPCode = 200) throws where T: Encodable {
+                         httpCode: HTTPCode = 200) throws where T: Encodable
+    {
         let mock = try Mock(apiCall: apiCall, baseURL: sut.baseURL, result: result, httpCode: httpCode)
         RequestMocking.add(mock: mock)
     }
@@ -138,18 +138,18 @@ private extension TestWebRepository {
 
 extension TestWebRepository {
     enum API: APICall {
-        
         case test
         case urlError
         case bodyError
         case noHttpCodeError
-        
+
         var path: String {
             if self == .urlError {
                 return "😋😋😋"
             }
             return "/test/path"
         }
+
         var method: String { "POST" }
         var headers: [String: String]? { nil }
         func body() throws -> Data? {
@@ -170,7 +170,7 @@ extension TestWebRepository {
     struct TestData: Codable, Equatable {
         let string: String
         let integer: Int
-        
+
         init() {
             string = "some string"
             integer = 42

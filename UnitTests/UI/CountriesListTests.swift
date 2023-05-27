@@ -6,18 +6,17 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
-import ViewInspector
-import SwiftUI
 @testable import CountriesSwiftUI
+import SwiftUI
+import ViewInspector
+import XCTest
 
-extension CountriesList: Inspectable { }
-extension ActivityIndicatorView: Inspectable { }
-extension CountryCell: Inspectable { }
-extension ErrorView: Inspectable { }
+extension CountriesList: Inspectable {}
+extension ActivityIndicatorView: Inspectable {}
+extension CountryCell: Inspectable {}
+extension ErrorView: Inspectable {}
 
 final class CountriesListTests: XCTestCase {
-
     func test_countries_notRequested() {
         let container = DIContainer(appState: AppState(), interactors:
             .mocked(
@@ -32,7 +31,7 @@ final class CountriesListTests: XCTestCase {
         ViewHosting.host(view: sut.inject(container))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_countries_isLoading_initial() {
         let container = DIContainer(appState: AppState(), interactors: .mocked())
         let sut = CountriesList(countries: .isLoading(last: nil, cancelBag: CancelBag()))
@@ -45,11 +44,12 @@ final class CountriesListTests: XCTestCase {
         ViewHosting.host(view: sut.inject(container))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_countries_isLoading_refresh() {
         let container = DIContainer(appState: AppState(), interactors: .mocked())
         let sut = CountriesList(countries: .isLoading(
-            last: Country.mockedData.lazyList, cancelBag: CancelBag()))
+            last: Country.mockedData.lazyList, cancelBag: CancelBag()
+        ))
         let exp = sut.inspection.inspect { view in
             let content = try view.content()
             XCTAssertNoThrow(try content.find(SearchBar.self))
@@ -62,7 +62,7 @@ final class CountriesListTests: XCTestCase {
         ViewHosting.host(view: sut.inject(container))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_countries_loaded() {
         let container = DIContainer(appState: AppState(), interactors: .mocked())
         let sut = CountriesList(countries: .loaded(Country.mockedData.lazyList))
@@ -78,7 +78,7 @@ final class CountriesListTests: XCTestCase {
         ViewHosting.host(view: sut.inject(container))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_countries_failed() {
         let container = DIContainer(appState: AppState(), interactors: .mocked())
         let sut = CountriesList(countries: .failed(NSError.test))
@@ -90,7 +90,7 @@ final class CountriesListTests: XCTestCase {
         ViewHosting.host(view: sut.inject(container))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_countries_failed_retry() {
         let container = DIContainer(appState: AppState(), interactors: .mocked(
             countriesInteractor: [.loadCountries(search: "", locale: .current)]
@@ -105,7 +105,7 @@ final class CountriesListTests: XCTestCase {
         ViewHosting.host(view: sut.inject(container))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_countries_navigation_to_details() {
         let countries = Country.mockedData
         let container = DIContainer(appState: AppState(), interactors: .mocked())
@@ -130,7 +130,7 @@ final class LocalizationTests: XCTestCase {
         let locale = Locale(identifier: "fr")
         XCTAssertEqual(sut.name(locale: locale), "Xyz")
     }
-    
+
     func test_string_for_locale() throws {
         let sut = "Countries".localized(Locale(identifier: "fr"))
         XCTAssertEqual(sut, "Des pays")

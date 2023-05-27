@@ -6,15 +6,14 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
+@testable import CountriesSwiftUI
 import SwiftUI
 import ViewInspector
-@testable import CountriesSwiftUI
+import XCTest
 
-extension SearchBar: Inspectable { }
+extension SearchBar: Inspectable {}
 
 final class SearchBarTests: XCTestCase {
-
     func test_searchBarCoordinator_beginEditing() {
         let text = Binding(wrappedValue: "abc")
         let sut = SearchBar.Coordinator(text: text)
@@ -24,7 +23,7 @@ final class SearchBarTests: XCTestCase {
         XCTAssertTrue(searchBar.showsCancelButton)
         XCTAssertEqual(text.wrappedValue, "abc")
     }
-    
+
     func test_searchBarCoordinator_endEditing() {
         let text = Binding(wrappedValue: "abc")
         let sut = SearchBar.Coordinator(text: text)
@@ -34,7 +33,7 @@ final class SearchBarTests: XCTestCase {
         XCTAssertFalse(searchBar.showsCancelButton)
         XCTAssertEqual(text.wrappedValue, "abc")
     }
-    
+
     func test_searchBarCoordinator_textDidChange() {
         let text = Binding(wrappedValue: "abc")
         let sut = SearchBar.Coordinator(text: text)
@@ -43,7 +42,7 @@ final class SearchBarTests: XCTestCase {
         sut.searchBar(searchBar, textDidChange: "test")
         XCTAssertEqual(text.wrappedValue, "test")
     }
-    
+
     func test_searchBarCoordinator_cancelButtonClicked() {
         let text = Binding(wrappedValue: "abc")
         let sut = SearchBar.Coordinator(text: text)

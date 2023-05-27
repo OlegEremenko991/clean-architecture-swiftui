@@ -1,21 +1,20 @@
-import XCTest
-import ViewInspector
 @testable import CountriesSwiftUI
+import ViewInspector
+import XCTest
 
-extension ContentView: Inspectable { }
+extension ContentView: Inspectable {}
 
 final class ContentViewTests: XCTestCase {
-
     func test_content_for_tests() throws {
         let sut = ContentView(container: .defaultValue, isRunningTests: true)
         XCTAssertNoThrow(try sut.inspect().group().text(0))
     }
-    
+
     func test_content_for_build() throws {
         let sut = ContentView(container: .defaultValue, isRunningTests: false)
         XCTAssertNoThrow(try sut.inspect().group().view(CountriesList.self, 0))
     }
-    
+
     func test_change_handler_for_colorScheme() throws {
         var appState = AppState()
         appState.routing.countriesList = .init(countryDetails: "USA")
@@ -24,7 +23,7 @@ final class ContentViewTests: XCTestCase {
         XCTAssertEqual(container.appState.value, appState)
         container.interactors.verify()
     }
-    
+
 //    func test_change_handler_for_sizeCategory() throws {
 //        var appState = AppState()
 //        appState.routing.countriesList = .init(countryDetails: "USA")

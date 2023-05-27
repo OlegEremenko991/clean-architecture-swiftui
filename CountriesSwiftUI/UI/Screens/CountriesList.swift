@@ -6,30 +6,30 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct CountriesList: View {
-    
     @State private var countriesSearch = CountriesSearch()
     @State private(set) var countries: Loadable<LazyList<Country>>
     @State private var routingState: Routing = .init()
     private var routingBinding: Binding<Routing> {
         $routingState.dispatched(to: injected.appState, \.routing.countriesList)
     }
+
     @State private var canRequestPushPermission: Bool = false
     @Environment(\.injected) private var injected: DIContainer
     @Environment(\.locale) private var locale: Locale
     private let localeContainer = LocaleReader.Container()
-    
+
     let inspection = Inspection<Self>()
-    
+
     init(countries: Loadable<LazyList<Country>> = .notRequested) {
-        self._countries = .init(initialValue: countries)
+        _countries = .init(initialValue: countries)
     }
-    
+
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             NavigationView {
                 self.content
                     .navigationBarItems(trailing: self.permissionsButton)
@@ -45,7 +45,7 @@ struct CountriesList: View {
         .onReceive(canRequestPushPermissionUpdate) { self.canRequestPushPermission = $0 }
         .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
-    
+
     private var content: AnyView {
         switch countries {
         case .notRequested: return AnyView(notRequestedView)
@@ -54,7 +54,7 @@ struct CountriesList: View {
         case let .failed(error): return AnyView(failedView(error))
         }
     }
-    
+
     private var permissionsButton: some View {
         Group {
             if canRequestPushPermission {
@@ -67,9 +67,7 @@ struct CountriesList: View {
 }
 
 private extension CountriesList {
-    
     struct LocaleReader: EnvironmentalModifier {
-        
         /**
          Retains the locale, provided by the Environment.
          Variable `@Environment(\.locale) var locale: Locale`
@@ -78,13 +76,14 @@ private extension CountriesList {
         class Container {
             var locale: Locale = .backendDefault
         }
+
         let container: Container
-        
+
         func resolve(in environment: EnvironmentValues) -> some ViewModifier {
             container.locale = environment.locale
             return DummyViewModifier()
         }
-        
+
         private struct DummyViewModifier: ViewModifier {
             func body(content: Content) -> some View {
                 // Cannot return just `content` because SwiftUI
@@ -104,7 +103,7 @@ private extension CountriesList {
                   search: countriesSearch.searchText,
                   locale: localeContainer.locale)
     }
-    
+
     func requestPushPermission() {
         injected.interactors.userPermissionsInteractor
             .request(permission: .pushNotifications)
@@ -117,7 +116,7 @@ private extension CountriesList {
     var notRequestedView: some View {
         Text("").onAppear(perform: reloadCountries)
     }
-    
+
     func loadingView(_ previouslyLoaded: LazyList<Country>?) -> some View {
         if let countries = previouslyLoaded {
             return AnyView(loadedView(countries, showSearch: true, showLoading: true))
@@ -125,7 +124,7 @@ private extension CountriesList {
             return AnyView(ActivityIndicatorView().padding())
         }
     }
-    
+
     func failedView(_ error: Error) -> some View {
         ErrorView(error: error, retryAction: {
             self.reloadCountries()
@@ -152,18 +151,19 @@ private extension CountriesList {
                 NavigationLink(
                     destination: self.detailsView(country: country),
                     tag: country.alpha3Code,
-                    selection: self.routingBinding.countryDetails) {
-                        CountryCell(country: country)
-                    }
+                    selection: self.routingBinding.countryDetails
+                ) {
+                    CountryCell(country: country)
+                }
             }
             .id(countries.count)
         }.padding(.bottom, bottomInset)
     }
-    
+
     func detailsView(country: Country) -> some View {
         CountryDetails(country: country)
     }
-    
+
     var bottomInset: CGFloat {
         if #available(iOS 14, *) {
             return 0
@@ -193,15 +193,14 @@ extension CountriesList {
 // MARK: - State Updates
 
 private extension CountriesList {
-    
     var routingUpdate: AnyPublisher<Routing, Never> {
         injected.appState.updates(for: \.routing.countriesList)
     }
-    
+
     var keyboardHeightUpdate: AnyPublisher<CGFloat, Never> {
         injected.appState.updates(for: \.system.keyboardHeight)
     }
-    
+
     var canRequestPushPermissionUpdate: AnyPublisher<Bool, Never> {
         injected.appState.updates(for: AppState.permissionKeyPath(for: .pushNotifications))
             .map { $0 == .notRequested || $0 == .denied }
@@ -210,10 +209,10 @@ private extension CountriesList {
 }
 
 #if DEBUG
-struct CountriesList_Previews: PreviewProvider {
-    static var previews: some View {
-        CountriesList(countries: .loaded(Country.mockedData.lazyList))
-            .inject(.preview)
+    struct CountriesList_Previews: PreviewProvider {
+        static var previews: some View {
+            CountriesList(countries: .loaded(Country.mockedData.lazyList))
+                .inject(.preview)
+        }
     }
-}
 #endif

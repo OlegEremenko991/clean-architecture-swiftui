@@ -6,8 +6,8 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 protocol SystemEventsHandler {
     func sceneOpenURLContexts(_ urlContexts: Set<UIOpenURLContext>)
@@ -19,27 +19,26 @@ protocol SystemEventsHandler {
 }
 
 struct RealSystemEventsHandler: SystemEventsHandler {
-    
     let container: DIContainer
     let deepLinksHandler: DeepLinksHandler
     let pushNotificationsHandler: PushNotificationsHandler
     let pushTokenWebRepository: PushTokenWebRepository
     private var cancelBag = CancelBag()
-    
+
     init(container: DIContainer,
          deepLinksHandler: DeepLinksHandler,
          pushNotificationsHandler: PushNotificationsHandler,
-         pushTokenWebRepository: PushTokenWebRepository) {
-        
+         pushTokenWebRepository: PushTokenWebRepository)
+    {
         self.container = container
         self.deepLinksHandler = deepLinksHandler
         self.pushNotificationsHandler = pushNotificationsHandler
         self.pushTokenWebRepository = pushTokenWebRepository
-        
+
         installKeyboardHeightObserver()
         installPushNotificationsSubscriberOnLaunch()
     }
-     
+
     private func installKeyboardHeightObserver() {
         let appState = container.appState
         NotificationCenter.default.keyboardHeightPublisher
@@ -48,7 +47,7 @@ struct RealSystemEventsHandler: SystemEventsHandler {
             }
             .store(in: cancelBag)
     }
-     
+
     private func installPushNotificationsSubscriberOnLaunch() {
         weak var permissions = container.interactors.userPermissionsInteractor
         container.appState
@@ -63,26 +62,26 @@ struct RealSystemEventsHandler: SystemEventsHandler {
             }
             .store(in: cancelBag)
     }
-    
+
     func sceneOpenURLContexts(_ urlContexts: Set<UIOpenURLContext>) {
         guard let url = urlContexts.first?.url else { return }
         handle(url: url)
     }
-    
+
     private func handle(url: URL) {
         guard let deepLink = DeepLink(url: url) else { return }
         deepLinksHandler.open(deepLink: deepLink)
     }
-    
+
     func sceneDidBecomeActive() {
         container.appState[\.system.isActive] = true
         container.interactors.userPermissionsInteractor.resolveStatus(for: .pushNotifications)
     }
-    
+
     func sceneWillResignActive() {
         container.appState[\.system.isActive] = false
     }
-    
+
     func handlePushRegistration(result: Result<Data, Error>) {
         if let pushToken = try? result.get() {
             pushTokenWebRepository
@@ -91,9 +90,10 @@ struct RealSystemEventsHandler: SystemEventsHandler {
                 .store(in: cancelBag)
         }
     }
-    
-    func appDidReceiveRemoteNotification(payload: NotificationPayload,
-                                         fetchCompletion: @escaping FetchCompletion) {
+
+    func appDidReceiveRemoteNotification(payload _: NotificationPayload,
+                                         fetchCompletion: @escaping FetchCompletion)
+    {
         container.interactors.countriesInteractor
             .refreshCountriesList()
             .sinkToResult { result in

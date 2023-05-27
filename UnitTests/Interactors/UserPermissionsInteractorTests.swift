@@ -6,19 +6,18 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
 import Combine
 @testable import CountriesSwiftUI
+import XCTest
 
 class UserPermissionsInteractorTests: XCTestCase {
-    
     var state = Store<AppState>(AppState())
     var sut: RealUserPermissionsInteractor!
-    
+
     override func setUp() {
         state.bulkUpdate { $0 = AppState() }
     }
-    
+
     func delay(_ closure: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: closure)
     }
@@ -34,9 +33,9 @@ class UserPermissionsInteractorTests: XCTestCase {
         }
         wait(for: [exp], timeout: 0.5)
     }
-    
+
     // MARK: - Push
-    
+
     func test_pushFirstResolveStatus() {
         XCTAssertEqual(AppState().permissions.push, .unknown)
         let exp = XCTestExpectation(description: #function)
@@ -50,7 +49,7 @@ class UserPermissionsInteractorTests: XCTestCase {
         }
         wait(for: [exp], timeout: 0.5)
     }
-    
+
     func test_pushSecondResolveStatus() {
         XCTAssertEqual(AppState().permissions.push, .unknown)
         let exp = XCTestExpectation(description: #function)
@@ -65,7 +64,7 @@ class UserPermissionsInteractorTests: XCTestCase {
         }
         wait(for: [exp], timeout: 0.5)
     }
-    
+
     func test_pushRequestPermissionNotDetermined() {
         state[\.permissions.push] = .notRequested
         let exp = XCTestExpectation(description: #function)
@@ -79,7 +78,7 @@ class UserPermissionsInteractorTests: XCTestCase {
         }
         wait(for: [exp], timeout: 0.5)
     }
-    
+
     func test_pushRequestPermissionDenied() {
         state[\.permissions.push] = .denied
         let exp = XCTestExpectation(description: #function)
@@ -90,7 +89,7 @@ class UserPermissionsInteractorTests: XCTestCase {
         sut.request(permission: .pushNotifications)
         wait(for: [exp], timeout: 0.5)
     }
-    
+
     func test_authorizationStatusMapping() {
         XCTAssertEqual(UNAuthorizationStatus.notDetermined.map, .notRequested)
         XCTAssertEqual(UNAuthorizationStatus.provisional.map, .notRequested)
@@ -98,9 +97,9 @@ class UserPermissionsInteractorTests: XCTestCase {
         XCTAssertEqual(UNAuthorizationStatus.authorized.map, .granted)
         XCTAssertEqual(UNAuthorizationStatus(rawValue: 10)?.map, .notRequested)
     }
-    
+
     // MARK: - Stub
-    
+
     func test_stubUserPermissionsInteractor() {
         let sut = StubUserPermissionsInteractor()
         sut.request(permission: .pushNotifications)

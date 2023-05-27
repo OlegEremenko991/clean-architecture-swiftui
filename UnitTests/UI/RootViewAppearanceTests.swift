@@ -6,14 +6,14 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
+@testable import CountriesSwiftUI
 import SwiftUI
 import ViewInspector
-@testable import CountriesSwiftUI
+import XCTest
 
-extension RootViewAppearance: Inspectable { }
+extension RootViewAppearance: Inspectable {}
 
-//final class RootViewAppearanceTests: XCTestCase {
+// final class RootViewAppearanceTests: XCTestCase {
 
 //    func test_blur_whenInactive() {
 //        let sut = RootViewAppearance()
@@ -29,7 +29,7 @@ extension RootViewAppearance: Inspectable { }
 //        ViewHosting.host(view: view)
 //        wait(for: [exp], timeout: 0.1)
 //    }
-//    
+//
 //    func test_blur_whenActive() {
 //        let sut = RootViewAppearance()
 //        let container = DIContainer(appState: .init(AppState()),
@@ -45,4 +45,4 @@ extension RootViewAppearance: Inspectable { }
 //        ViewHosting.host(view: view)
 //        wait(for: [exp], timeout: 0.1)
 //    }
-//}
+// }

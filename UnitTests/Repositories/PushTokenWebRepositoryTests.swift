@@ -6,24 +6,23 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
 import Combine
 @testable import CountriesSwiftUI
+import XCTest
 
 class PushTokenWebRepositoryTests: XCTestCase {
-
     private var sut: RealPushTokenWebRepository!
     private var cancelBag = CancelBag()
-    
+
     override func setUp() {
         sut = RealPushTokenWebRepository(session: .mockedResponsesOnly,
                                          baseURL: "https://test.com")
     }
-    
+
     override func tearDown() {
         cancelBag = CancelBag()
     }
-    
+
     func test_register() {
         let exp = XCTestExpectation(description: #function)
         sut.register(devicePushToken: Data())

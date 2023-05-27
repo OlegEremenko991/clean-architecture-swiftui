@@ -9,11 +9,10 @@
 import SwiftUI
 
 struct ModalDetailsView: View {
-    
     let country: Country
     @Binding var isDisplayed: Bool
     let inspection = Inspection<Self>()
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -32,7 +31,7 @@ struct ModalDetailsView: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
-    
+
     private var closeButton: some View {
         Button(action: {
             self.isDisplayed = false
@@ -41,14 +40,13 @@ struct ModalDetailsView: View {
 }
 
 #if DEBUG
-struct ModalDetailsView_Previews: PreviewProvider {
-    
-    @State static var isDisplayed: Bool = true
-    
-    static var previews: some View {
-        // possible fix https://stackoverflow.com/a/63979934/11830041
-        ModalDetailsView(country: Country.mockedData[0], isDisplayed: $isDisplayed)
-            .inject(.preview)
+    struct ModalDetailsView_Previews: PreviewProvider {
+        @State static var isDisplayed: Bool = true
+
+        static var previews: some View {
+            // possible fix https://stackoverflow.com/a/63979934/11830041
+            ModalDetailsView(country: Country.mockedData[0], isDisplayed: $isDisplayed)
+                .inject(.preview)
+        }
     }
-}
 #endif

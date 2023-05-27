@@ -6,8 +6,8 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import CoreData
 import Combine
+import CoreData
 @testable import CountriesSwiftUI
 
 final class MockedPersistentStore: Mock, PersistentStore {
@@ -16,31 +16,34 @@ final class MockedPersistentStore: Mock, PersistentStore {
         let updated: Int
         let deleted: Int
     }
+
     enum Action: Equatable {
         case count
         case fetchCountries(ContextSnapshot)
         case fetchCountryDetails(ContextSnapshot)
         case update(ContextSnapshot)
     }
+
     var actions = MockActions<Action>(expected: [])
-    
+
     var countResult: Int = 0
-    
+
     deinit {
         destroyDatabase()
     }
-    
+
     // MARK: - count
-    
-    func count<T>(_ fetchRequest: NSFetchRequest<T>) -> AnyPublisher<Int, Error> {
+
+    func count<T>(_: NSFetchRequest<T>) -> AnyPublisher<Int, Error> {
         register(.count)
         return Just<Int>.withErrorType(countResult, Error.self).publish()
     }
-    
+
     // MARK: - fetch
-    
+
     func fetch<T, V>(_ fetchRequest: NSFetchRequest<T>,
-                     map: @escaping (T) throws -> V?) -> AnyPublisher<LazyList<V>, Error> {
+                     map: @escaping (T) throws -> V?) -> AnyPublisher<LazyList<V>, Error>
+    {
         do {
             let context = container.viewContext
             context.reset()
@@ -60,9 +63,9 @@ final class MockedPersistentStore: Mock, PersistentStore {
             return Fail<LazyList<V>, Error>(error: error).publish()
         }
     }
-    
+
     // MARK: - update
-    
+
     func update<Result>(_ operation: @escaping DBOperation<Result>) -> AnyPublisher<Result, Error> {
         do {
             let context = container.viewContext
@@ -74,9 +77,9 @@ final class MockedPersistentStore: Mock, PersistentStore {
             return Fail<Result, Error>(error: error).publish()
         }
     }
-    
+
     // MARK: -
-    
+
     func preloadData(_ preload: (NSManagedObjectContext) throws -> Void) throws {
         try preload(container.viewContext)
         if container.viewContext.hasChanges {
@@ -84,17 +87,17 @@ final class MockedPersistentStore: Mock, PersistentStore {
         }
         container.viewContext.reset()
     }
-    
+
     // MARK: - Database
-    
+
     private let dbVersion = CoreDataStack.Version(CoreDataStack.Version.actual)
-    
+
     private var dbURL: URL {
         guard let url = dbVersion.dbFileURL(.cachesDirectory, .userDomainMask)
-            else { fatalError() }
+        else { fatalError() }
         return url
     }
-    
+
     private lazy var container: NSPersistentContainer = {
         let container = NSPersistentContainer(name: dbVersion.modelName)
         try? FileManager().removeItem(at: dbURL)
@@ -102,7 +105,7 @@ final class MockedPersistentStore: Mock, PersistentStore {
         container.persistentStoreDescriptions = [store]
         let group = DispatchGroup()
         group.enter()
-        container.loadPersistentStores { (desc, error) in
+        container.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("\(error)")
             }
@@ -113,7 +116,7 @@ final class MockedPersistentStore: Mock, PersistentStore {
         container.viewContext.undoManager = nil
         return container
     }()
-    
+
     private func destroyDatabase() {
         try? container.persistentStoreCoordinator
             .destroyPersistentStore(at: dbURL, ofType: NSSQLiteStoreType, options: nil)

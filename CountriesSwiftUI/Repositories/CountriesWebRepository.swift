@@ -15,16 +15,15 @@ protocol CountriesWebRepository: WebRepository {
 }
 
 struct RealCountriesWebRepository: CountriesWebRepository {
-    
     let session: URLSession
     let baseURL: String
     let bgQueue = DispatchQueue(label: "bg_parse_queue")
-    
+
     init(session: URLSession, baseURL: String) {
         self.session = session
         self.baseURL = baseURL
     }
-    
+
     func loadCountries() -> AnyPublisher<[Country], Error> {
         return call(endpoint: API.allCountries)
     }
@@ -34,7 +33,7 @@ struct RealCountriesWebRepository: CountriesWebRepository {
         return request
             .tryMap { array -> Country.Details.Intermediate in
                 guard let details = array.first
-                    else { throw APIError.unexpectedResponse }
+                else { throw APIError.unexpectedResponse }
                 return details
             }
             .eraseToAnyPublisher()
@@ -60,15 +59,18 @@ extension RealCountriesWebRepository.API: APICall {
             return "/name/\(encodedName ?? country.name)"
         }
     }
+
     var method: String {
         switch self {
         case .allCountries, .countryDetails:
             return "GET"
         }
     }
+
     var headers: [String: String]? {
         return ["Accept": "application/json"]
     }
+
     func body() throws -> Data? {
         return nil
     }

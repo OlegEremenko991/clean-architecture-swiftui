@@ -17,11 +17,10 @@ protocol CountriesInteractor {
 }
 
 struct RealCountriesInteractor: CountriesInteractor {
-    
     let webRepository: CountriesWebRepository
     let dbRepository: CountriesDBRepository
     let appState: Store<AppState>
-    
+
     init(webRepository: CountriesWebRepository, dbRepository: CountriesDBRepository, appState: Store<AppState>) {
         self.webRepository = webRepository
         self.dbRepository = dbRepository
@@ -29,10 +28,9 @@ struct RealCountriesInteractor: CountriesInteractor {
     }
 
     func load(countries: LoadableSubject<LazyList<Country>>, search: String, locale: Locale) {
-        
         let cancelBag = CancelBag()
         countries.wrappedValue.setIsLoading(cancelBag: cancelBag)
-        
+
         Just<Void>
             .withErrorType(Error.self)
             .flatMap { [dbRepository] _ -> AnyPublisher<Bool, Error> in
@@ -51,7 +49,7 @@ struct RealCountriesInteractor: CountriesInteractor {
             .sinkToLoadable { countries.wrappedValue = $0 }
             .store(in: cancelBag)
     }
-    
+
     func refreshCountriesList() -> AnyPublisher<Void, Error> {
         return webRepository
             .loadCountries()
@@ -63,7 +61,6 @@ struct RealCountriesInteractor: CountriesInteractor {
     }
 
     func load(countryDetails: LoadableSubject<Country.Details>, country: Country) {
-        
         let cancelBag = CancelBag()
         countryDetails.wrappedValue.setIsLoading(cancelBag: cancelBag)
 
@@ -79,7 +76,7 @@ struct RealCountriesInteractor: CountriesInteractor {
             .sinkToLoadable { countryDetails.wrappedValue = $0.unwrap() }
             .store(in: cancelBag)
     }
-    
+
     private func loadAndStoreCountryDetailsFromWeb(country: Country) -> AnyPublisher<Country.Details?, Error> {
         return webRepository
             .loadCountryDetails(country: country)
@@ -89,21 +86,18 @@ struct RealCountriesInteractor: CountriesInteractor {
             }
             .eraseToAnyPublisher()
     }
-    
+
     private var requestHoldBackTimeInterval: TimeInterval {
         return ProcessInfo.processInfo.isRunningTests ? 0 : 0.5
     }
 }
 
 struct StubCountriesInteractor: CountriesInteractor {
-    
     func refreshCountriesList() -> AnyPublisher<Void, Error> {
         return Just<Void>.withErrorType(Error.self)
     }
-    
-    func load(countries: LoadableSubject<LazyList<Country>>, search: String, locale: Locale) {
-    }
-    
-    func load(countryDetails: LoadableSubject<Country.Details>, country: Country) {
-    }
+
+    func load(countries _: LoadableSubject<LazyList<Country>>, search _: String, locale _: Locale) {}
+
+    func load(countryDetails _: LoadableSubject<Country.Details>, country _: Country) {}
 }

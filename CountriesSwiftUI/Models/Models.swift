@@ -14,7 +14,7 @@ struct Country: Codable, Equatable {
     let population: Int
     let flag: URL?
     let alpha3Code: Code
-    
+
     typealias Code = String
 }
 

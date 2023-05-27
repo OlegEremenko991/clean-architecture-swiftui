@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="1">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="1">
     <entity name="Country" representedClassName="CountryMO" syncable="YES" codeGenerationType="class">
         <attribute name="alpha3code" attributeType="String"/>
         <attribute name="flagURL" optional="YES" attributeType="String"/>
@@ -43,8 +43,8 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="Country" positionX="38.2890625" positionY="-259.01953125" width="128" height="148"/>
-        <element name="CountryDetails" positionX="235.60546875" positionY="-228.81640625" width="128" height="103"/>
+        <element name="Country" positionX="38.2890625" positionY="-259.01953125" width="128" height="134"/>
+        <element name="CountryDetails" positionX="235.60546875" positionY="-228.81640625" width="128" height="89"/>
         <element name="Currency" positionX="38.796875" positionY="-82.796875" width="128" height="103"/>
         <element name="NameTranslation" positionX="-147.11328125" positionY="-198.9609375" width="128" height="88"/>
     </elements>

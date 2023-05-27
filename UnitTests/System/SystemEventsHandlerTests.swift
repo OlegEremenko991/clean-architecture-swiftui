@@ -6,27 +6,29 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
-import UIKit
 @testable import CountriesSwiftUI
+import UIKit
+import XCTest
 
 final class SystemEventsHandlerTests: XCTestCase {
-    
     var sut: RealSystemEventsHandler!
-    
+
     var appState: AppState {
         return sut.container.appState.value
     }
+
     var interactors: DIContainer.Interactors {
         return sut.container.interactors
     }
+
     var deepLinksHandler: MockedDeepLinksHandler? {
         return sut.deepLinksHandler as? MockedDeepLinksHandler
     }
+
     var pushTokenWebRepository: MockedPushTokenWebRepository? {
         return sut.pushTokenWebRepository as? MockedPushTokenWebRepository
     }
-    
+
     func verify(appState: AppState = AppState(), file: StaticString = #file, line: UInt = #line) {
         interactors.verify(file: file, line: line)
         deepLinksHandler?.verify(file: file, line: line)
@@ -37,11 +39,13 @@ final class SystemEventsHandlerTests: XCTestCase {
     func setupSut(countries: [MockedCountriesInteractor.Action] = [],
                   permissions: [MockedUserPermissionsInteractor.Action] = [],
                   deepLink: [MockedDeepLinksHandler.Action] = [],
-                  pushToken: [MockedPushTokenWebRepository.Action] = []) {
+                  pushToken: [MockedPushTokenWebRepository.Action] = [])
+    {
         let interactors = DIContainer.Interactors(
             countriesInteractor: MockedCountriesInteractor(expected: countries),
             imagesInteractor: MockedImagesInteractor(expected: []),
-            userPermissionsInteractor: MockedUserPermissionsInteractor(expected: permissions))
+            userPermissionsInteractor: MockedUserPermissionsInteractor(expected: permissions)
+        )
         let container = DIContainer(appState: AppState(),
                                     interactors: interactors)
         let deepLinksHandler = MockedDeepLinksHandler(expected: deepLink)
@@ -52,17 +56,17 @@ final class SystemEventsHandlerTests: XCTestCase {
                                       pushNotificationsHandler: pushNotificationsHandler,
                                       pushTokenWebRepository: pushTokenWebRepository)
     }
-    
+
     func test_noSideEffectOnInit() {
         setupSut()
         sut.container.appState[\.permissions.push] = .denied
         let reference = sut.container.appState.value
         verify(appState: reference)
     }
-    
+
     func test_subscribesOnPushIfGranted() {
         setupSut(permissions: [
-            .request(.pushNotifications)
+            .request(.pushNotifications),
         ])
         sut.container.appState[\.permissions.push] = .granted
         let reference = sut.container.appState.value
@@ -71,7 +75,7 @@ final class SystemEventsHandlerTests: XCTestCase {
 
     func test_didBecomeActive() {
         setupSut(permissions: [
-            .resolveStatus(.pushNotifications)
+            .resolveStatus(.pushNotifications),
         ])
         sut.sceneDidBecomeActive()
         var reference = AppState()
@@ -79,10 +83,10 @@ final class SystemEventsHandlerTests: XCTestCase {
         reference.system.isActive = true
         verify(appState: reference)
     }
-    
+
     func test_willResignActive() {
         setupSut(permissions: [
-            .resolveStatus(.pushNotifications)
+            .resolveStatus(.pushNotifications),
         ])
         sut.sceneDidBecomeActive()
         sut.sceneWillResignActive()
@@ -98,7 +102,7 @@ final class SystemEventsHandlerTests: XCTestCase {
         sut.sceneOpenURLContexts(contexts)
         verify()
     }
-    
+
     func test_openURLContexts_randomURL() {
         let url1 = "https://www.example.com/link/?param=USD"
         let contexts1 = UIOpenURLContext.contexts(url1)
@@ -109,39 +113,39 @@ final class SystemEventsHandlerTests: XCTestCase {
         sut.sceneOpenURLContexts(contexts2)
         verify()
     }
-    
+
     func test_openURLContexts_emptyContexts() {
         setupSut()
         sut.sceneOpenURLContexts(Set<UIOpenURLContext>())
         verify()
     }
-    
+
     #if os(iOS) && !targetEnvironment(macCatalyst)
-    func test_keyboardHeight() throws {
-        let textField = UITextField(frame: .zero)
-        let window = try XCTUnwrap(UIApplication.shared.windows.first, "Cannot extract the host view")
-        window.makeKeyAndVisible()
-        window.addSubview(textField)
-        setupSut()
-        XCTAssertEqual(appState.system.keyboardHeight, 0)
-        textField.becomeFirstResponder()
-        XCTAssertGreaterThan(appState.system.keyboardHeight, 0)
-        textField.removeFromSuperview()
-        verify()
-    }
+        func test_keyboardHeight() throws {
+            let textField = UITextField(frame: .zero)
+            let window = try XCTUnwrap(UIApplication.shared.windows.first, "Cannot extract the host view")
+            window.makeKeyAndVisible()
+            window.addSubview(textField)
+            setupSut()
+            XCTAssertEqual(appState.system.keyboardHeight, 0)
+            textField.becomeFirstResponder()
+            XCTAssertGreaterThan(appState.system.keyboardHeight, 0)
+            textField.removeFromSuperview()
+            verify()
+        }
     #endif
-    
+
     func test_handlePushRegistration() {
         setupSut(pushToken: [
-            .register(Data())
+            .register(Data()),
         ])
         sut.handlePushRegistration(result: .success(Data()))
         verify()
     }
-    
+
     func test_silentRemoteNotificationSuccess() {
         setupSut(countries: [
-            .refreshCountriesList
+            .refreshCountriesList,
         ])
         let exp = XCTestExpectation(description: #function)
         sut.appDidReceiveRemoteNotification(payload: [:]) { result in
@@ -162,15 +166,13 @@ private extension UIOpenURLContext {
 
 private extension UIOpenURLContext {
     final class Test: UIOpenURLContext {
-        
         var urlString: String = ""
         override var url: URL { URL(string: urlString)! }
-        
+
         static func create(url: String) -> Test {
             let instance = createInstance()
             instance.urlString = url
             return instance
         }
     }
-
 }

@@ -30,15 +30,14 @@ protocol UserPermissionsInteractor: AnyObject {
 // MARK: - RealUserPermissionsInteractor
 
 final class RealUserPermissionsInteractor: UserPermissionsInteractor {
-    
     private let appState: Store<AppState>
     private let openAppSettings: () -> Void
-    
+
     init(appState: Store<AppState>, openAppSettings: @escaping () -> Void) {
         self.appState = appState
         self.openAppSettings = openAppSettings
     }
-    
+
     func resolveStatus(for permission: Permission) {
         let keyPath = AppState.permissionKeyPath(for: permission)
         let currentStatus = appState[keyPath]
@@ -51,7 +50,7 @@ final class RealUserPermissionsInteractor: UserPermissionsInteractor {
             pushNotificationsPermissionStatus(onResolve)
         }
     }
-    
+
     func request(permission: Permission) {
         let keyPath = AppState.permissionKeyPath(for: permission)
         let currentStatus = appState[keyPath]
@@ -65,7 +64,7 @@ final class RealUserPermissionsInteractor: UserPermissionsInteractor {
         }
     }
 }
-    
+
 // MARK: - Push Notifications
 
 extension UNAuthorizationStatus {
@@ -80,7 +79,6 @@ extension UNAuthorizationStatus {
 }
 
 private extension RealUserPermissionsInteractor {
-    
     func pushNotificationsPermissionStatus(_ resolve: @escaping (Permission.Status) -> Void) {
         let center = UNUserNotificationCenter.current()
         center.getNotificationSettings { settings in
@@ -89,10 +87,10 @@ private extension RealUserPermissionsInteractor {
             }
         }
     }
-    
+
     func requestPushNotificationsPermission() {
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound]) { (isGranted, error) in
+        center.requestAuthorization(options: [.alert, .sound]) { isGranted, _ in
             DispatchQueue.main.async {
                 self.appState[\.permissions.push] = isGranted ? .granted : .denied
             }
@@ -103,9 +101,7 @@ private extension RealUserPermissionsInteractor {
 // MARK: -
 
 final class StubUserPermissionsInteractor: UserPermissionsInteractor {
-    
-    func resolveStatus(for permission: Permission) {
-    }
-    func request(permission: Permission) {
-    }
+    func resolveStatus(for _: Permission) {}
+
+    func request(permission _: Permission) {}
 }

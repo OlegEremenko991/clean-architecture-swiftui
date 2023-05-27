@@ -15,13 +15,12 @@ protocol ImagesInteractor {
 }
 
 struct RealImagesInteractor: ImagesInteractor {
-    
     let webRepository: ImageWebRepository
-    
+
     init(webRepository: ImageWebRepository) {
         self.webRepository = webRepository
     }
-    
+
     func load(image: LoadableSubject<UIImage>, url: URL?) {
         guard let url = url else {
             image.wrappedValue = .notRequested; return
@@ -37,6 +36,5 @@ struct RealImagesInteractor: ImagesInteractor {
 }
 
 struct StubImagesInteractor: ImagesInteractor {
-    func load(image: LoadableSubject<UIImage>, url: URL?) {
-    }
+    func load(image _: LoadableSubject<UIImage>, url _: URL?) {}
 }

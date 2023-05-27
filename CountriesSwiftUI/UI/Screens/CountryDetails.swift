@@ -6,13 +6,12 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct CountryDetails: View {
-    
     let country: Country
-    
+
     @Environment(\.locale) var locale: Locale
     @Environment(\.injected) private var injected: DIContainer
     @State private var details: Loadable<Country.Details>
@@ -20,20 +19,21 @@ struct CountryDetails: View {
     private var routingBinding: Binding<Routing> {
         $routingState.dispatched(to: injected.appState, \.routing.countryDetails)
     }
+
     let inspection = Inspection<Self>()
-    
+
     init(country: Country, details: Loadable<Country.Details> = .notRequested) {
         self.country = country
-        self._details = .init(initialValue: details)
+        _details = .init(initialValue: details)
     }
-    
+
     var body: some View {
         content
             .navigationBarTitle(country.name(locale: locale))
             .onReceive(routingUpdate) { self.routingState = $0 }
             .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
-    
+
     private var content: AnyView {
         switch details {
         case .notRequested: return AnyView(notRequestedView)
@@ -52,7 +52,7 @@ private extension CountryDetails {
         injected.interactors.countriesInteractor
             .load(countryDetails: $details, country: country)
     }
-    
+
     func showCountryDetailsSheet() {
         injected.appState[\.routing.countryDetails.detailsSheet] = true
     }
@@ -66,7 +66,7 @@ private extension CountryDetails {
             self.loadCountryDetails()
         }
     }
-    
+
     var loadingView: some View {
         VStack {
             ActivityIndicatorView()
@@ -75,7 +75,7 @@ private extension CountryDetails {
             }, label: { Text("Cancel loading") })
         }
     }
-    
+
     func failedView(_ error: Error) -> some View {
         ErrorView(error: error, retryAction: {
             self.loadCountryDetails()
@@ -103,7 +103,7 @@ private extension CountryDetails {
         .sheet(isPresented: routingBinding.detailsSheet,
                content: { self.modalDetailsView() })
     }
-    
+
     func flagView(url: URL) -> some View {
         HStack {
             Spacer()
@@ -115,7 +115,7 @@ private extension CountryDetails {
             Spacer()
         }
     }
-    
+
     func basicInfoSectionView(countryDetails: Country.Details) -> some View {
         Section(header: Text("Basic Info")) {
             DetailRow(leftLabel: Text(country.alpha3Code), rightLabel: "Code")
@@ -123,7 +123,7 @@ private extension CountryDetails {
             DetailRow(leftLabel: Text("\(countryDetails.capital)"), rightLabel: "Capital")
         }
     }
-    
+
     func currenciesSectionView(currencies: [Country.Currency]) -> some View {
         Section(header: Text("Currencies")) {
             ForEach(currencies) { currency in
@@ -131,7 +131,7 @@ private extension CountryDetails {
             }
         }
     }
-    
+
     func neighborsSectionView(neighbors: [Country]) -> some View {
         Section(header: Text("Neighboring countries")) {
             ForEach(neighbors) { country in
@@ -141,11 +141,11 @@ private extension CountryDetails {
             }
         }
     }
-    
+
     func neighbourDetailsView(country: Country) -> some View {
         CountryDetails(country: country)
     }
-    
+
     func modalDetailsView() -> some View {
         ModalDetailsView(country: country,
                          isDisplayed: routingBinding.detailsSheet)
@@ -157,7 +157,7 @@ private extension CountryDetails {
 
 private extension Country.Currency {
     var title: String {
-        return name + (symbol.map {" " + $0} ?? "")
+        return name + (symbol.map { " " + $0 } ?? "")
     }
 }
 
@@ -172,7 +172,6 @@ extension CountryDetails {
 // MARK: - State Updates
 
 private extension CountryDetails {
-    
     var routingUpdate: AnyPublisher<Routing, Never> {
         injected.appState.updates(for: \.routing.countryDetails)
     }
@@ -181,10 +180,10 @@ private extension CountryDetails {
 // MARK: - Preview
 
 #if DEBUG
-struct CountryDetails_Previews: PreviewProvider {
-    static var previews: some View {
-        CountryDetails(country: Country.mockedData[0])
-            .inject(.preview)
+    struct CountryDetails_Previews: PreviewProvider {
+        static var previews: some View {
+            CountryDetails(country: Country.mockedData[0])
+                .inject(.preview)
+        }
     }
-}
 #endif

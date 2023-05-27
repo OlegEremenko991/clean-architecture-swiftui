@@ -6,15 +6,14 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
+@testable import CountriesSwiftUI
 import SwiftUI
 import ViewInspector
-@testable import CountriesSwiftUI
+import XCTest
 
-extension ModalDetailsView: Inspectable { }
+extension ModalDetailsView: Inspectable {}
 
 final class ModalDetailsViewTests: XCTestCase {
-
     func test_modalDetails() {
         let country = Country.mockedData[0]
         let interactors = DIContainer.Interactors.mocked(
@@ -30,7 +29,7 @@ final class ModalDetailsViewTests: XCTestCase {
         ViewHosting.host(view: sut.inject(AppState(), interactors))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_modalDetails_close() {
         let country = Country.mockedData[0]
         let interactors = DIContainer.Interactors.mocked(
@@ -47,7 +46,7 @@ final class ModalDetailsViewTests: XCTestCase {
         ViewHosting.host(view: sut.inject(AppState(), interactors))
         wait(for: [exp], timeout: 2)
     }
-    
+
     func test_modalDetails_close_localization() throws {
         let isDisplayed = Binding(wrappedValue: true)
         let sut = ModalDetailsView(country: Country.mockedData[0], isDisplayed: isDisplayed)

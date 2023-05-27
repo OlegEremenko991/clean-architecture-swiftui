@@ -6,11 +6,10 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 struct SearchBar: UIViewRepresentable {
-
     @Binding var text: String
 
     func makeUIView(context: UIViewRepresentableContext<SearchBar>) -> UISearchBar {
@@ -19,10 +18,10 @@ struct SearchBar: UIViewRepresentable {
         return searchBar
     }
 
-    func updateUIView(_ uiView: UISearchBar, context: UIViewRepresentableContext<SearchBar>) {
+    func updateUIView(_ uiView: UISearchBar, context _: UIViewRepresentableContext<SearchBar>) {
         uiView.text = text
     }
-    
+
     func makeCoordinator() -> SearchBar.Coordinator {
         return Coordinator(text: $text)
     }
@@ -30,27 +29,26 @@ struct SearchBar: UIViewRepresentable {
 
 extension SearchBar {
     final class Coordinator: NSObject, UISearchBarDelegate {
-        
         let text: Binding<String>
-        
+
         init(text: Binding<String>) {
             self.text = text
         }
-        
-        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+
+        func searchBar(_: UISearchBar, textDidChange searchText: String) {
             text.wrappedValue = searchText
         }
-        
+
         func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
             searchBar.setShowsCancelButton(true, animated: true)
             return true
         }
-        
+
         func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
             searchBar.setShowsCancelButton(false, animated: true)
             return true
         }
-        
+
         func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
             searchBar.endEditing(true)
             searchBar.text = ""

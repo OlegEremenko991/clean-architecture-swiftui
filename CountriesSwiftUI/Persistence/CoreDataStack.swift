@@ -6,12 +6,12 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import CoreData
 import Combine
+import CoreData
 
 protocol PersistentStore {
     typealias DBOperation<Result> = (NSManagedObjectContext) throws -> Result
-    
+
     func count<T>(_ fetchRequest: NSFetchRequest<T>) -> AnyPublisher<Int, Error>
     func fetch<T, V>(_ fetchRequest: NSFetchRequest<T>,
                      map: @escaping (T) throws -> V?) -> AnyPublisher<LazyList<V>, Error>
@@ -19,14 +19,14 @@ protocol PersistentStore {
 }
 
 struct CoreDataStack: PersistentStore {
-    
     private let container: NSPersistentContainer
     private let isStoreLoaded = CurrentValueSubject<Bool, Error>(false)
     private let bgQueue = DispatchQueue(label: "coredata")
-    
+
     init(directory: FileManager.SearchPathDirectory = .documentDirectory,
          domainMask: FileManager.SearchPathDomainMask = .userDomainMask,
-         version vNumber: UInt) {
+         version vNumber: UInt)
+    {
         let version = Version(vNumber)
         container = NSPersistentContainer(name: version.modelName)
         if let url = version.dbFileURL(directory, domainMask) {
@@ -34,7 +34,7 @@ struct CoreDataStack: PersistentStore {
             container.persistentStoreDescriptions = [store]
         }
         bgQueue.async { [weak isStoreLoaded, weak container] in
-            container?.loadPersistentStores { (storeDescription, error) in
+            container?.loadPersistentStores { _, error in
                 DispatchQueue.main.async {
                     if let error = error {
                         isStoreLoaded?.send(completion: .failure(error))
@@ -46,7 +46,7 @@ struct CoreDataStack: PersistentStore {
             }
         }
     }
-    
+
     func count<T>(_ fetchRequest: NSFetchRequest<T>) -> AnyPublisher<Int, Error> {
         return onStoreIsReady
             .flatMap { [weak container] in
@@ -61,9 +61,10 @@ struct CoreDataStack: PersistentStore {
             }
             .eraseToAnyPublisher()
     }
-    
+
     func fetch<T, V>(_ fetchRequest: NSFetchRequest<T>,
-                     map: @escaping (T) throws -> V?) -> AnyPublisher<LazyList<V>, Error> {
+                     map: @escaping (T) throws -> V?) -> AnyPublisher<LazyList<V>, Error>
+    {
         assert(Thread.isMainThread)
         let fetch = Future<LazyList<V>, Error> { [weak container] promise in
             guard let context = container?.viewContext else { return }
@@ -90,7 +91,7 @@ struct CoreDataStack: PersistentStore {
             .flatMap { fetch }
             .eraseToAnyPublisher()
     }
-    
+
     func update<Result>(_ operation: @escaping DBOperation<Result>) -> AnyPublisher<Result, Error> {
         let update = Future<Result, Error> { [weak bgQueue, weak container] promise in
             bgQueue?.async {
@@ -117,7 +118,7 @@ struct CoreDataStack: PersistentStore {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
-    
+
     private var onStoreIsReady: AnyPublisher<Void, Error> {
         return isStoreLoaded
             .filter { $0 }
@@ -135,22 +136,23 @@ extension CoreDataStack.Version {
 extension CoreDataStack {
     struct Version {
         private let number: UInt
-        
+
         init(_ number: UInt) {
             self.number = number
         }
-        
+
         var modelName: String {
             return "db_model_v1"
         }
-        
+
         func dbFileURL(_ directory: FileManager.SearchPathDirectory,
-                       _ domainMask: FileManager.SearchPathDomainMask) -> URL? {
+                       _ domainMask: FileManager.SearchPathDomainMask) -> URL?
+        {
             return FileManager.default
                 .urls(for: directory, in: domainMask).first?
                 .appendingPathComponent(subpathToDB)
         }
-        
+
         private var subpathToDB: String {
             return "db.sql"
         }

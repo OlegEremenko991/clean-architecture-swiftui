@@ -9,10 +9,9 @@
 import SwiftUI
 
 struct CountryCell: View {
-    
     let country: Country
     @Environment(\.locale) var locale: Locale
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(country.name(locale: locale))
@@ -26,10 +25,10 @@ struct CountryCell: View {
 }
 
 #if DEBUG
-struct CountryCell_Previews: PreviewProvider {
-    static var previews: some View {
-        CountryCell(country: Country.mockedData[0])
-            .previewLayout(.fixed(width: 375, height: 60))
+    struct CountryCell_Previews: PreviewProvider {
+        static var previews: some View {
+            CountryCell(country: Country.mockedData[0])
+                .previewLayout(.fixed(width: 375, height: 60))
+        }
     }
-}
 #endif

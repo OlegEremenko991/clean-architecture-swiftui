@@ -6,9 +6,9 @@
 //  Copyright © 2020 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
 import Combine
 @testable import CountriesSwiftUI
+import XCTest
 
 // MARK: - SystemEventsHandler
 
@@ -20,37 +20,39 @@ final class MockedSystemEventsHandler: Mock, SystemEventsHandler {
         case pushRegistration
         case recevieRemoteNotification
     }
+
     var actions = MockActions<Action>(expected: [])
-    
+
     init(expected: [Action]) {
-        self.actions = .init(expected: expected)
+        actions = .init(expected: expected)
     }
-    
-    func sceneOpenURLContexts(_ urlContexts: Set<UIOpenURLContext>) {
+
+    func sceneOpenURLContexts(_: Set<UIOpenURLContext>) {
         register(.openURL)
     }
-    
+
     func sceneDidBecomeActive() {
         register(.becomeActive)
     }
-    
+
     func sceneWillResignActive() {
         register(.resignActive)
     }
-    
-    func handlePushRegistration(result: Result<Data, Error>) {
+
+    func handlePushRegistration(result _: Result<Data, Error>) {
         register(.pushRegistration)
     }
-    
-    func appDidReceiveRemoteNotification(payload: NotificationPayload,
-                                         fetchCompletion: @escaping FetchCompletion) {
+
+    func appDidReceiveRemoteNotification(payload _: NotificationPayload,
+                                         fetchCompletion _: @escaping FetchCompletion)
+    {
         register(.recevieRemoteNotification)
     }
 }
 
 // MARK: - PushNotificationsHandler
 
-final class DummyPushNotificationsHandler: PushNotificationsHandler { }
+final class DummyPushNotificationsHandler: PushNotificationsHandler {}
 
 // MARK: - DeepLinksHandler
 
@@ -58,12 +60,13 @@ final class MockedDeepLinksHandler: Mock, DeepLinksHandler {
     enum Action: Equatable {
         case open(DeepLink)
     }
+
     var actions = MockActions<Action>(expected: [])
-    
+
     init(expected: [Action]) {
-        self.actions = .init(expected: expected)
+        actions = .init(expected: expected)
     }
-    
+
     func open(deepLink: DeepLink) {
         register(.open(deepLink))
     }

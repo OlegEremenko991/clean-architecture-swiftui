@@ -6,11 +6,11 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
-import SwiftUI
 import Combine
-import ViewInspector
 @testable import CountriesSwiftUI
+import SwiftUI
+import ViewInspector
+import XCTest
 
 // MARK: - UI
 
@@ -80,17 +80,18 @@ extension Publisher {
 func XCTAssertEqual<T>(_ expression1: @autoclosure () throws -> T,
                        _ expression2: @autoclosure () throws -> T,
                        removing prefixes: [String],
-                       file: StaticString = #file, line: UInt = #line) where T: Equatable {
+                       file: StaticString = #file, line: UInt = #line) where T: Equatable
+{
     do {
         let exp1 = try expression1()
         let exp2 = try expression2()
         if exp1 != exp2 {
-            let desc1 = prefixes.reduce(String(describing: exp1), { (str, prefix) in
+            let desc1 = prefixes.reduce(String(describing: exp1)) { str, prefix in
                 str.replacingOccurrences(of: prefix, with: "")
-            })
-            let desc2 = prefixes.reduce(String(describing: exp2), { (str, prefix) in
+            }
+            let desc2 = prefixes.reduce(String(describing: exp2)) { str, prefix in
                 str.replacingOccurrences(of: prefix, with: "")
-            })
+            }
             XCTFail("XCTAssertEqual failed:\n\n\(desc1)\n\nis not equal to\n\n\(desc2)", file: file, line: line)
         }
     } catch {
@@ -98,7 +99,7 @@ func XCTAssertEqual<T>(_ expression1: @autoclosure () throws -> T,
     }
 }
 
-protocol PrefixRemovable { }
+protocol PrefixRemovable {}
 
 extension PrefixRemovable {
     static var prefixes: [String] {
@@ -109,7 +110,7 @@ extension PrefixRemovable {
         return [
             "\(module).",
             "Loadable<\(fullTypeName)>",
-            "Loadable<LazyList<\(fullTypeName)>>"
+            "Loadable<LazyList<\(fullTypeName)>>",
         ]
     }
 }
@@ -117,16 +118,16 @@ extension PrefixRemovable {
 // MARK: - BindingWithPublisher
 
 struct BindingWithPublisher<Value> {
-    
     let binding: Binding<Value>
     let updatesRecorder: AnyPublisher<[Value], Never>
-    
+
     init(value: Value, recordingTimeInterval: TimeInterval = 0.5) {
         var value = value
         var updates = [value]
         binding = Binding<Value>(
             get: { value },
-            set: { value = $0; updates.append($0) })
+            set: { value = $0; updates.append($0) }
+        )
         updatesRecorder = Future<[Value], Never> { completion in
             DispatchQueue.main.asyncAfter(deadline: .now() + recordingTimeInterval) {
                 completion(.success(updates))
@@ -148,4 +149,4 @@ extension NSError {
     }
 }
 
-extension Inspection: InspectionEmissary where V: Inspectable { }
+extension Inspection: InspectionEmissary where V: Inspectable {}

@@ -8,12 +8,11 @@
 
 import UserNotifications
 
-protocol PushNotificationsHandler { }
+protocol PushNotificationsHandler {}
 
 class RealPushNotificationsHandler: NSObject, PushNotificationsHandler {
-    
     private let deepLinksHandler: DeepLinksHandler
-    
+
     init(deepLinksHandler: DeepLinksHandler) {
         self.deepLinksHandler = deepLinksHandler
         super.init()
@@ -24,24 +23,26 @@ class RealPushNotificationsHandler: NSObject, PushNotificationsHandler {
 // MARK: - UNUserNotificationCenterDelegate
 
 extension RealPushNotificationsHandler: UNUserNotificationCenterDelegate {
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
+    func userNotificationCenter(_: UNUserNotificationCenter,
+                                willPresent _: UNNotification,
                                 withCompletionHandler completionHandler:
-        @escaping (UNNotificationPresentationOptions) -> Void) {
+                                @escaping (UNNotificationPresentationOptions) -> Void)
+    {
         completionHandler([.alert, .sound])
     }
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
+
+    func userNotificationCenter(_: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
-                                withCompletionHandler completionHandler: @escaping () -> Void) {
+                                withCompletionHandler completionHandler: @escaping () -> Void)
+    {
         let userInfo = response.notification.request.content.userInfo
         handleNotification(userInfo: userInfo, completionHandler: completionHandler)
     }
-    
+
     func handleNotification(userInfo: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
         guard let payload = userInfo["aps"] as? NotificationPayload,
-            let countryCode = payload["country"] as? Country.Code else {
+              let countryCode = payload["country"] as? Country.Code
+        else {
             completionHandler()
             return
         }

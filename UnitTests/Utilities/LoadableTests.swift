@@ -6,12 +6,11 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import XCTest
 import Combine
 @testable import CountriesSwiftUI
+import XCTest
 
 final class LoadableTests: XCTestCase {
-
     func test_equality() {
         let possibleValues: [Loadable<Int>] = [
             .notRequested,
@@ -19,10 +18,10 @@ final class LoadableTests: XCTestCase {
             .isLoading(last: 9, cancelBag: CancelBag()),
             .loaded(5),
             .loaded(6),
-            .failed(NSError.test)
+            .failed(NSError.test),
         ]
-        possibleValues.enumerated().forEach { (index1, value1) in
-            possibleValues.enumerated().forEach { (index2, value2) in
+        possibleValues.enumerated().forEach { index1, value1 in
+            possibleValues.enumerated().forEach { index2, value2 in
                 if index1 == index2 {
                     XCTAssertEqual(value1, value2)
                 } else {
@@ -31,7 +30,7 @@ final class LoadableTests: XCTestCase {
             }
         }
     }
-    
+
     func test_cancelLoading() {
         let cancenBag1 = CancelBag(), cancenBag2 = CancelBag()
         let subject = PassthroughSubject<Int, Never>()
@@ -50,21 +49,21 @@ final class LoadableTests: XCTestCase {
         XCTAssertEqual(cancenBag2.subscriptions.count, 0)
         XCTAssertEqual(sut2.value, 7)
     }
-    
+
     func test_map() {
         let values: [Loadable<Int>] = [
             .notRequested,
             .isLoading(last: nil, cancelBag: CancelBag()),
             .isLoading(last: 5, cancelBag: CancelBag()),
             .loaded(7),
-            .failed(NSError.test)
+            .failed(NSError.test),
         ]
         let expect: [Loadable<String>] = [
             .notRequested,
             .isLoading(last: nil, cancelBag: CancelBag()),
             .isLoading(last: "5", cancelBag: CancelBag()),
             .loaded("7"),
-            .failed(NSError.test)
+            .failed(NSError.test),
         ]
         let sut = values.map { value in
             value.map { "\($0)" }
@@ -89,13 +88,13 @@ final class LoadableTests: XCTestCase {
         }
         XCTAssertNotNil(failedErrValue.error)
     }
-    
+
     func test_throwingMap() {
         let value = Loadable<Int>.loaded(5)
         let sut = value.map { _ in throw NSError.test }
         XCTAssertNotNil(sut.error)
     }
-    
+
     func test_valueIsMissing() {
         XCTAssertEqual(ValueIsMissingError().localizedDescription, "Data is missing")
     }

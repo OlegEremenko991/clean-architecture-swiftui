@@ -6,17 +6,17 @@
 //  Copyright © 2019 Alexey Naumov. All rights reserved.
 //
 
-import UIKit
-import SwiftUI
 import Combine
+import SwiftUI
+import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     var window: UIWindow?
     var systemEventsHandler: SystemEventsHandler?
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
-               options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(_ scene: UIScene, willConnectTo _: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions)
+    {
         let environment = AppEnvironment.bootstrap()
         let contentView = ContentView(container: environment.container)
         if let windowScene = scene as? UIWindowScene {
@@ -25,21 +25,21 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window = window
             window.makeKeyAndVisible()
         }
-        self.systemEventsHandler = environment.systemEventsHandler
+        systemEventsHandler = environment.systemEventsHandler
         if !connectionOptions.urlContexts.isEmpty {
             systemEventsHandler?.sceneOpenURLContexts(connectionOptions.urlContexts)
         }
     }
-    
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+
+    func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         systemEventsHandler?.sceneOpenURLContexts(URLContexts)
     }
-    
-    func sceneDidBecomeActive(_ scene: UIScene) {
+
+    func sceneDidBecomeActive(_: UIScene) {
         systemEventsHandler?.sceneDidBecomeActive()
     }
-    
-    func sceneWillResignActive(_ scene: UIScene) {
+
+    func sceneWillResignActive(_: UIScene) {
         systemEventsHandler?.sceneWillResignActive()
     }
 }
